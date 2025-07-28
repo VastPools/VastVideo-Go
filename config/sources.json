@@ -1,0 +1,103 @@
+{
+  "version": "1.0.0",
+  "description": "视频源配置文件",
+  "last_updated": "2025-07-28",
+  "sources": {
+    "bfzy": {
+      "name": "暴风资源",
+      "url": "https://bfzyapi.com/api.php/provide/vod",
+      "is_default": true,
+      "enabled": true
+    },
+    "dyttzy": {
+      "name": "电影天堂资源",
+      "url": "http://caiji.dyttzyapi.com/api.php/provide/vod",
+      "is_default": true,
+      "enabled": true
+    },
+    "ruyi": {
+      "name": "如意资源",
+      "url": "https://cj.rycjapi.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "tyyszy": {
+      "name": "天涯资源",
+      "url": "https://tyyszy.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "heimuer": {
+      "name": "黑木耳",
+      "url": "https://json.heimuer.xyz/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "zy360": {
+      "name": "360资源",
+      "url": "https://360zy.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "wolong": {
+      "name": "卧龙资源",
+      "url": "https://wolongzyw.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "jisu": {
+      "name": "极速资源",
+      "url": "https://jszyapi.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "dbzy": {
+      "name": "豆瓣资源",
+      "url": "https://dbzy.tv/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "mozhua": {
+      "name": "魔爪资源",
+      "url": "https://mozhuazy.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "mdzy": {
+      "name": "魔都资源",
+      "url": "https://www.mdzyapi.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "zuid": {
+      "name": "最大资源",
+      "url": "https://api.zuidapi.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "baidu": {
+      "name": "百度云资源",
+      "url": "https://api.apibdzy.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "wujin": {
+      "name": "无尽资源",
+      "url": "https://api.wujinapi.me/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "wwzy": {
+      "name": "旺旺短剧",
+      "url": "https://wwzy.tv/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    },
+    "ikun": {
+      "name": "iKun资源",
+      "url": "https://ikunzyapi.com/api.php/provide/vod",
+      "is_default": false,
+      "enabled": true
+    }
+  }
+} 

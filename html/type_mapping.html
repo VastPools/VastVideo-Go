@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VastVideo-Go - 类型映射管理</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #18192b;
+      color: #fff;
+      line-height: 1.6;
+      min-height: 100vh;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      background: #23244a;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .container {
+      margin-top: 52px;
+      padding: 16px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section {
+      background: #23244a;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #6c63ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      background: #6c63ff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin: 4px;
+    }
+
+    .btn:hover {
+      background: #5a52d5;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #4a4a6a;
+    }
+
+    .btn-secondary:hover {
+      background: #3a3a5a;
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .btn-success {
+      background: #27ae60;
+    }
+
+    .btn-success:hover {
+      background: #229954;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #b3b6d4;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #4a4a6a;
+      border-radius: 6px;
+      background: #2a2b4a;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #6c63ff;
+      box-shadow: 0 0 0 2px rgba(108,99,255,0.2);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: #2a2b4a;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #4a4a6a;
+    }
+
+    .card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #b3b6d4;
+      margin-bottom: 8px;
+    }
+
+    .card .meta {
+      font-size: 12px;
+      color: #8a8ca8;
+      margin-bottom: 12px;
+    }
+
+    .card .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .table th,
+    .table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #4a4a6a;
+    }
+
+    .table th {
+      background: #2a2b4a;
+      font-weight: 600;
+      color: #6c63ff;
+    }
+
+    .table tr:hover {
+      background: #2a2b4a;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-primary {
+      background: #6c63ff;
+      color: #fff;
+    }
+
+    .badge-success {
+      background: #27ae60;
+      color: #fff;
+    }
+
+    .badge-warning {
+      background: #f39c12;
+      color: #fff;
+    }
+
+    .badge-danger {
+      background: #e74c3c;
+      color: #fff;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #4a4a6a;
+      border-radius: 50%;
+      border-top-color: #6c63ff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .toast {
+      position: fixed;
+      top: 70px;
+      right: 16px;
+      background: #23244a;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 10001;
+      transform: translateX(100%);
+      transition: transform 0.3s;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      border-left: 4px solid #27ae60;
+    }
+
+    .toast.error {
+      border-left: 4px solid #e74c3c;
+    }
+
+    .toast.warning {
+      border-left: 4px solid #f39c12;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 10002;
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: #23244a;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 90vw;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .close {
+      background: none;
+      border: none;
+      color: #b3b6d4;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close:hover {
+      color: #fff;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #4a4a6a;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      color: #b3b6d4;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      color: #6c63ff;
+      border-bottom-color: #6c63ff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .mapping-modal,
+    .source-types-modal {
+      max-height: 80vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mapping-header {
+      padding-bottom: 16px;
+      border-bottom: 1px solid #4a4a6a;
+      margin-bottom: 16px;
+    }
+
+    .mapping-header h3 {
+      margin: 0 0 8px 0;
+      color: #6c63ff;
+    }
+
+    .mapping-header p {
+      margin: 0;
+      color: #b3b6d4;
+      font-size: 14px;
+    }
+
+    .source-list-container {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 16px;
+    }
+
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .source-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: #2a2b4a;
+      border-radius: 8px;
+      border: 1px solid #4a4a6a;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 60px;
+    }
+
+    .source-item:hover {
+      background: #3a3b5a;
+      border-color: #6c63ff;
+      transform: translateY(-1px);
+    }
+
+    .source-info {
+      flex: 1;
+    }
+
+    .source-name {
+      font-weight: 600;
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    .source-code {
+      color: #8a8ca8;
+      font-size: 11px;
+    }
+
+    .source-stats {
+      display: flex;
+      gap: 12px;
+      margin-right: 12px;
+    }
+
+    .mapping-count,
+    .total-count {
+      text-align: center;
+    }
+
+    .count-number {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      color: #6c63ff;
+    }
+
+    .count-label {
+      display: block;
+      font-size: 11px;
+      color: #8a8ca8;
+      margin-top: 1px;
+    }
+
+    .source-arrow {
+      font-size: 20px;
+      color: #6c63ff;
+      font-weight: bold;
+    }
+
+    .mapping-footer {
+      padding-top: 16px;
+      border-top: 1px solid #4a4a6a;
+      text-align: right;
+    }
+
+    /* 源类型选择模态框样式 */
+    .source-type-modal {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .modal-header {
+      padding-bottom: 16px;
+      border-bottom: 1px solid #4a4a6a;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      margin: 0 0 8px 0;
+      color: #6c63ff;
+    }
+
+    .modal-header p {
+      margin: 0;
+      color: #b3b6d4;
+      font-size: 14px;
+    }
+
+    .type-selection-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .type-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #4a4a6a;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: #2a2b4a;
+      border: 1px solid #4a4a6a;
+      border-radius: 6px;
+      color: #b3b6d4;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: #3a3b5a;
+      border-color: #6c63ff;
+    }
+
+    .filter-btn.active {
+      background: #6c63ff;
+      border-color: #6c63ff;
+      color: #fff;
+    }
+
+    .type-grid {
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      padding-right: 8px;
+    }
+
+    .type-card {
+      background: #2a2b4a;
+      border: 1px solid #4a4a6a;
+      border-radius: 8px;
+      padding: 10px;
+      transition: all 0.2s;
+      min-height: 80px;
+    }
+
+    .type-card:hover {
+      border-color: #6c63ff;
+      transform: translateY(-1px);
+    }
+
+    .type-card.mapped {
+      border-color: #27ae60;
+      background: #1a2a1a;
+    }
+
+    .type-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .type-checkbox input[type="checkbox"] {
+      margin: 0;
+      width: auto;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .type-content {
+      flex: 1;
+    }
+
+    .type-name {
+      font-weight: 600;
+      color: #fff;
+      font-size: 13px;
+      margin-bottom: 3px;
+      line-height: 1.2;
+    }
+
+    .type-id {
+      color: #8a8ca8;
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+
+    .mapped-badge {
+      display: inline-block;
+      padding: 1px 4px;
+      background: #27ae60;
+      color: #fff;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .modal-footer {
+      padding-top: 16px;
+      border-top: 1px solid #4a4a6a;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+
+    .result {
+      background: #2a2b4a;
+      border: 1px solid #4a4a6a;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .result.success {
+      border-color: #27ae60;
+      background: #1a2a1a;
+    }
+
+    .result.error {
+      border-color: #e74c3c;
+      background: #2a1a1a;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 12px;
+      }
+      
+      .section {
+        padding: 16px;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .table {
+        font-size: 14px;
+      }
+      
+      .table th,
+      .table td {
+        padding: 8px;
+      }
+
+      .source-list {
+        grid-template-columns: 1fr;
+      }
+
+      .source-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .source-stats {
+        margin-right: 0;
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .source-arrow {
+        align-self: flex-end;
+        margin-top: -40px;
+      }
+
+      .type-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .type-filters {
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        flex: 1;
+        min-width: 80px;
+      }
+
+      .modal-content {
+        width: 95%;
+        max-height: 90vh;
+        max-width: 95vw;
+      }
+
+      .mapping-modal,
+      .source-types-modal {
+        max-height: 85vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎯 类型映射管理</h1>
+  </div>
+
+  <div class="container">
+    <!-- 全局类型管理 -->
+    <div class="section">
+      <h2>🌐 全局类型管理</h2>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('global-types')">类型列表</button>
+        <button class="tab" onclick="switchTab('add-global-type')">添加类型</button>
+      </div>
+      
+      <div id="global-types" class="tab-content active">
+        <div class="grid" id="global-types-grid">
+          <div class="loading">加载中...</div>
+        </div>
+      </div>
+      
+      <div id="add-global-type" class="tab-content">
+        <form id="add-global-type-form">
+          <div class="grid">
+            <div class="form-group">
+              <label for="global-type-id">类型ID *</label>
+              <input type="text" id="global-type-id" required placeholder="例如: movie">
+            </div>
+            <div class="form-group">
+              <label for="global-type-name">类型名称 *</label>
+              <input type="text" id="global-type-name" required placeholder="例如: 电影">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="global-type-description">描述</label>
+            <textarea id="global-type-description" rows="3" placeholder="类型描述"></textarea>
+          </div>
+          <div class="grid">
+            <div class="form-group">
+              <label for="global-type-priority">优先级</label>
+              <input type="number" id="global-type-priority" value="1" min="1" max="100">
+            </div>
+            <div class="form-group">
+              <label for="global-type-enabled">启用状态</label>
+              <select id="global-type-enabled">
+                <option value="true">启用</option>
+                <option value="false">禁用</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success">创建全局类型</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 源管理 -->
+    <div class="section">
+      <h2>🔗 源管理</h2>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('source-list')">源列表</button>
+        <button class="tab" onclick="switchTab('init-all-sources')">批量初始化</button>
+      </div>
+      
+      <div id="source-list" class="tab-content active">
+        <div class="grid" id="source-list-grid">
+          <div class="loading">加载中...</div>
+        </div>
+      </div>
+      
+      <div id="init-all-sources" class="tab-content">
+        <div class="form-group">
+          <label for="config-path">配置文件路径</label>
+          <input type="text" id="config-path" value="config/sources.json" placeholder="配置文件路径">
+        </div>
+        <button class="btn btn-success" onclick="initAllSources()">批量初始化所有源</button>
+        <div id="init-result" class="result" style="margin-top: 16px; display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑模态框 -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">编辑</h3>
+        <button class="close" onclick="closeModal()">&times;</button>
+      </div>
+      <div id="modal-body">
+        <!-- 动态内容 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 全局变量
+    let globalTypes = {};
+    let sourceMappings = {};
+    let currentEditItem = null;
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      loadGlobalTypes();
+      loadSourceList();
+      loadGlobalTypeOptions();
+    });
+
+    // 切换标签页
+    function switchTab(tabName) {
+      // 隐藏所有标签内容
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // 移除所有标签的active状态
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // 显示选中的标签内容
+      document.getElementById(tabName).classList.add('active');
+      
+      // 激活对应的标签
+      event.target.classList.add('active');
+    }
+
+    // 加载全局类型
+    async function loadGlobalTypes() {
+      try {
+        const response = await fetch('/api/type_mapping_manage/global_types');
+        const data = await response.json();
+        
+        if (data.success) {
+          globalTypes = data.data;
+          renderGlobalTypes();
+        } else {
+          showToast('加载全局类型失败: ' + data.message, 'error');
+        }
+      } catch (error) {
+        showToast('加载全局类型失败: ' + error.message, 'error');
+      }
+    }
+
+    // 渲染全局类型
+    function renderGlobalTypes() {
+      const grid = document.getElementById('global-types-grid');
+      grid.innerHTML = '';
+
+      Object.entries(globalTypes).forEach(([id, type]) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${type.name}</h3>
+          <p>${type.description || '无描述'}</p>
+          <div class="meta">
+            ID: ${type.id} | 优先级: ${type.priority} | 
+            <span class="badge ${type.enabled ? 'badge-success' : 'badge-danger'}">
+              ${type.enabled ? '启用' : '禁用'}
+            </span>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" onclick="mapGlobalType('${id}')">映射</button>
+            <button class="btn btn-secondary" onclick="editGlobalType('${id}')">编辑</button>
+            <button class="btn btn-danger" onclick="deleteGlobalType('${id}')">删除</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // 加载源列表
+    async function loadSourceList() {
+      try {
+        const response = await fetch('/api/sources');
+        const data = await response.json();
+        
+        if (data.success) {
+          renderSourceList(data.data);
+        } else {
+          showToast('加载源列表失败: ' + data.message, 'error');
+        }
+      } catch (error) {
+        showToast('加载源列表失败: ' + error.message, 'error');
+      }
+    }
+
+    // 渲染源列表
+    function renderSourceList(sources) {
+      const grid = document.getElementById('source-list-grid');
+      grid.innerHTML = '';
+
+      sources.forEach(source => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${source.name} (${source.code})</h3>
+          <p>URL: ${source.url}</p>
+          <div class="meta">
+            <span class="badge ${source.is_default ? 'badge-primary' : 'badge-secondary'}">
+              ${source.is_default ? '默认源' : '普通源'}
+            </span>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary" onclick="viewSourceTypes('${source.code}')">查看类型</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // 加载全局类型选项
+    function loadGlobalTypeOptions() {
+      const selects = document.querySelectorAll('.global-type-select');
+      selects.forEach(select => {
+        select.innerHTML = '<option value="">请选择</option>';
+        Object.entries(globalTypes).forEach(([id, type]) => {
+          if (type.enabled) {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = type.name;
+            select.appendChild(option);
+          }
+        });
+      });
+    }
+
+    // 添加全局类型
+    document.getElementById('add-global-type-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        id: document.getElementById('global-type-id').value,
+        name: document.getElementById('global-type-name').value,
+        description: document.getElementById('global-type-description').value,
+        priority: parseInt(document.getElementById('global-type-priority').value),
+        enabled: document.getElementById('global-type-enabled').value === 'true'
+      };
+
+      try {
+        const response = await fetch('/api/type_mapping_manage/global_type', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast('全局类型创建成功', 'success');
+          this.reset();
+          await loadGlobalTypes();
+          loadGlobalTypeOptions();
+        } else {
+          showToast('创建失败: ' + data.message, 'error');
+        }
+      } catch (error) {
+        showToast('创建失败: ' + error.message, 'error');
+      }
+    });
+
+
+
+    // 编辑全局类型
+    function editGlobalType(id) {
+      const type = globalTypes[id];
+      currentEditItem = { type: 'global', id: id };
+      
+      const modalBody = document.getElementById('modal-body');
+      modalBody.innerHTML = `
+        <form id="edit-global-type-form">
+          <div class="grid">
+            <div class="form-group">
+              <label>类型ID</label>
+              <input type="text" id="edit-global-type-id" value="${type.id}" readonly>
+            </div>
+            <div class="form-group">
+              <label>类型名称 *</label>
+              <input type="text" id="edit-global-type-name" value="${type.name}" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>描述</label>
+            <textarea id="edit-global-type-description" rows="3">${type.description || ''}</textarea>
+          </div>
+          <div class="grid">
+            <div class="form-group">
+              <label>优先级</label>
+              <input type="number" id="edit-global-type-priority" value="${type.priority}" min="1" max="100">
+            </div>
+            <div class="form-group">
+              <label>启用状态</label>
+              <select id="edit-global-type-enabled">
+                <option value="true" ${type.enabled ? 'selected' : ''}>启用</option>
+                <option value="false" ${!type.enabled ? 'selected' : ''}>禁用</option>
+              </select>
+            </div>
+          </div>
+          <div style="text-align: right; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+            <button type="submit" class="btn btn-success">保存</button>
+          </div>
+        </form>
+      `;
+
+      document.getElementById('edit-global-type-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = {
+          id: document.getElementById('edit-global-type-id').value,
+          name: document.getElementById('edit-global-type-name').value,
+          description: document.getElementById('edit-global-type-description').value,
+          priority: parseInt(document.getElementById('edit-global-type-priority').value),
+          enabled: document.getElementById('edit-global-type-enabled').value === 'true'
+        };
+
+        try {
+          const response = await fetch('/api/type_mapping_manage/global_type', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          const data = await response.json();
+          
+          if (data.success) {
+            showToast('全局类型更新成功', 'success');
+            closeModal();
+            await loadGlobalTypes();
+            loadGlobalTypeOptions();
+          } else {
+            showToast('更新失败: ' + data.message, 'error');
+          }
+        } catch (error) {
+          showToast('更新失败: ' + error.message, 'error');
+        }
+      });
+
+      document.getElementById('edit-modal').classList.add('show');
+    }
+
+    // 映射全局类型
+    async function mapGlobalType(globalTypeId) {
+      const globalType = globalTypes[globalTypeId];
+      if (!globalType) {
+        showToast('全局类型不存在', 'error');
+        return;
+      }
+
+      // 获取所有源的类型映射
+      try {
+        const response = await fetch('/api/type_mapping_manage/source_mappings');
+        const data = await response.json();
+        
+        if (!data.success) {
+          showToast('获取源映射失败: ' + data.message, 'error');
+          return;
+        }
+
+        // 保存当前状态到全局变量
+        window.currentGlobalTypeId = globalTypeId;
+        window.currentGlobalType = globalType;
+        window.currentSourceMappings = data.data;
+
+        showMappingModal(globalTypeId, globalType, data.data);
+      } catch (error) {
+        showToast('获取源映射失败: ' + error.message, 'error');
+      }
+    }
+
+    // 显示映射模态框
+    function showMappingModal(globalTypeId, globalType, sourceMappings) {
+      const modalBody = document.getElementById('modal-body');
+      
+      // 计算每个源的映射统计
+      const sourceStats = {};
+      Object.entries(sourceMappings).forEach(([sourceCode, mapping]) => {
+        const mappedCount = mapping.type_list.filter(type => type.global_type === globalTypeId).length;
+        const totalCount = mapping.type_list.length;
+        sourceStats[sourceCode] = { mappedCount, totalCount };
+      });
+
+      modalBody.innerHTML = `
+        <div class="mapping-modal">
+          <div class="mapping-header">
+            <h3>映射全局类型: ${globalType.name} (${globalTypeId})</h3>
+            <p>点击源名称查看和选择该源的类型进行映射</p>
+          </div>
+          
+          <div class="source-list-container">
+            <div class="source-list">
+              ${Object.entries(sourceMappings).map(([sourceCode, mapping]) => {
+                const stats = sourceStats[sourceCode];
+                return `
+                  <div class="source-item" onclick="showSourceTypeModal('${sourceCode}', '${globalTypeId}', '${globalType.name}')">
+                    <div class="source-info">
+                      <div class="source-name">${mapping.name}</div>
+                      <div class="source-code">${sourceCode}</div>
+                    </div>
+                    <div class="source-stats">
+                      <div class="mapping-count">
+                        <span class="count-number">${stats.mappedCount}</span>
+                        <span class="count-label">已映射</span>
+                      </div>
+                      <div class="total-count">
+                        <span class="count-number">${stats.totalCount}</span>
+                        <span class="count-label">总类型</span>
+                      </div>
+                    </div>
+                    <div class="source-arrow">›</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+          
+          <div class="mapping-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">关闭</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('edit-modal').classList.add('show');
+    }
+
+    // 显示源类型选择模态框
+    function showSourceTypeModal(sourceCode, globalTypeId, globalTypeName) {
+      // 获取源映射数据
+      const sourceMappings = window.currentSourceMappings;
+      const sourceMapping = sourceMappings[sourceCode];
+      
+      if (!sourceMapping) {
+        showToast('源映射数据不存在', 'error');
+        return;
+      }
+
+      const modalBody = document.getElementById('modal-body');
+      modalBody.innerHTML = `
+        <div class="source-type-modal">
+          <div class="modal-header">
+            <h3>${sourceMapping.name} (${sourceCode})</h3>
+            <p>映射到全局类型: ${globalTypeName}</p>
+          </div>
+          
+          <div class="type-selection-container">
+            <div class="type-filters">
+              <button class="filter-btn active" onclick="filterTypes('all')">全部</button>
+              <button class="filter-btn" onclick="filterTypes('mapped')">已映射</button>
+              <button class="filter-btn" onclick="filterTypes('unmapped')">未映射</button>
+            </div>
+            
+            <div class="type-grid">
+              ${sourceMapping.type_list.map(type => {
+                const isMapped = type.global_type === globalTypeId;
+                return `
+                  <div class="type-card ${isMapped ? 'mapped' : 'unmapped'}" data-type-id="${type.id}">
+                    <label class="type-checkbox">
+                      <input type="checkbox" 
+                             ${isMapped ? 'checked' : ''}
+                             onchange="updateTypeMapping('${sourceCode}', ${type.id}, '${globalTypeId}', this.checked)">
+                      <div class="type-content">
+                        <div class="type-name">${type.name}</div>
+                        <div class="type-id">ID: ${type.id}</div>
+                        ${isMapped ? '<div class="mapped-badge">已映射</div>' : ''}
+                      </div>
+                    </label>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="backToSourceList()">返回源列表</button>
+            <button type="button" class="btn btn-primary" onclick="closeModal()">完成</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 过滤类型显示
+    function filterTypes(filter) {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const typeCards = document.querySelectorAll('.type-card');
+      
+      // 更新按钮状态
+      filterBtns.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // 过滤类型卡片
+      typeCards.forEach(card => {
+        const isMapped = card.classList.contains('mapped');
+        switch(filter) {
+          case 'mapped':
+            card.style.display = isMapped ? 'block' : 'none';
+            break;
+          case 'unmapped':
+            card.style.display = !isMapped ? 'block' : 'none';
+            break;
+          default:
+            card.style.display = 'block';
+        }
+      });
+    }
+
+    // 返回源列表
+    function backToSourceList() {
+      const globalTypeId = window.currentGlobalTypeId;
+      const globalType = window.currentGlobalType;
+      const sourceMappings = window.currentSourceMappings;
+      
+      showMappingModal(globalTypeId, globalType, sourceMappings);
+    }
+
+    // 更新类型映射
+    async function updateTypeMapping(sourceCode, typeId, globalTypeId, isMapped) {
+      try {
+        // 获取当前源映射
+        const response = await fetch('/api/type_mapping_manage/source_mappings');
+        const data = await response.json();
+        
+        if (!data.success) {
+          showToast('获取源映射失败', 'error');
+          return;
+        }
+
+        const sourceMapping = data.data[sourceCode];
+        if (!sourceMapping) {
+          showToast('源映射不存在', 'error');
+          return;
+        }
+
+        // 更新类型映射
+        const updatedTypeList = sourceMapping.type_list.map(type => {
+          if (type.id === typeId) {
+            return {
+              ...type,
+              global_type: isMapped ? globalTypeId : ''
+            };
+          }
+          return type;
+        });
+
+        // 保存更新
+        const updateResponse = await fetch(`/api/type_mapping_manage/source_mapping?source_code=${sourceCode}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: sourceMapping.name,
+            enabled: sourceMapping.enabled,
+            type_list: updatedTypeList
+          })
+        });
+
+        const updateData = await updateResponse.json();
+        
+        if (updateData.success) {
+          showToast(`${isMapped ? '映射' : '取消映射'}成功`, 'success');
+          
+          // 更新全局变量中的数据
+          if (window.currentSourceMappings && window.currentSourceMappings[sourceCode]) {
+            window.currentSourceMappings[sourceCode].type_list = updatedTypeList;
+          }
+          
+          // 刷新当前界面
+          setTimeout(() => {
+            if (window.currentSourceMappings) {
+              showMappingModal(globalTypeId, window.currentGlobalType, window.currentSourceMappings);
+            }
+          }, 300);
+        } else {
+          showToast('更新失败: ' + updateData.message, 'error');
+        }
+      } catch (error) {
+        showToast('更新失败: ' + error.message, 'error');
+      }
+    }
+
+    // 删除全局类型
+    async function deleteGlobalType(id) {
+      if (!confirm('确定要删除这个全局类型吗？')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/type_mapping_manage/global_type?id=${id}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast('全局类型删除成功', 'success');
+          await loadGlobalTypes();
+          loadGlobalTypeOptions();
+        } else {
+          showToast('删除失败: ' + data.message, 'error');
+        }
+      } catch (error) {
+        showToast('删除失败: ' + error.message, 'error');
+      }
+    }
+
+    // 查看源类型
+    async function viewSourceTypes(sourceCode) {
+      try {
+        const response = await fetch('/api/type_mapping_manage/source_mappings');
+        const data = await response.json();
+        
+        if (!data.success) {
+          showToast('获取源映射失败: ' + data.message, 'error');
+          return;
+        }
+
+        const sourceMapping = data.data[sourceCode];
+        if (!sourceMapping) {
+          showToast('源映射不存在', 'error');
+          return;
+        }
+
+        showSourceTypesModal(sourceCode, sourceMapping);
+      } catch (error) {
+        showToast('获取源映射失败: ' + error.message, 'error');
+      }
+    }
+
+    // 显示源类型模态框
+    function showSourceTypesModal(sourceCode, sourceMapping) {
+      const modalBody = document.getElementById('modal-body');
+      modalBody.innerHTML = `
+        <div class="source-types-modal">
+          <h3>${sourceMapping.name} (${sourceCode}) - 类型列表</h3>
+          <p>共 ${sourceMapping.type_list.length} 个类型</p>
+          
+          <div class="type-list">
+            ${sourceMapping.type_list.map(type => `
+              <div class="type-item">
+                <div class="type-info">
+                  <span class="type-name">${type.name}</span>
+                  <span class="type-id">(ID: ${type.id})</span>
+                </div>
+                <div class="type-mapping">
+                  ${type.global_type ? 
+                    `<span class="badge badge-success">已映射到: ${globalTypes[type.global_type]?.name || type.global_type}</span>` : 
+                    '<span class="badge badge-warning">未映射</span>'
+                  }
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div style="text-align: right; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">关闭</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('edit-modal').classList.add('show');
+    }
+
+    // 关闭模态框
+    function closeModal() {
+      document.getElementById('edit-modal').classList.remove('show');
+      currentEditItem = null;
+    }
+
+    // 显示提示消息
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 100);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+
+    // 批量初始化所有源
+    async function initAllSources() {
+      const configPath = document.getElementById('config-path').value;
+      const resultDiv = document.getElementById('init-result');
+      
+      if (!configPath) {
+        showToast('请填写配置文件路径', 'error');
+        return;
+      }
+      
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'result';
+      resultDiv.textContent = '正在批量初始化所有源...';
+      
+      try {
+        const response = await fetch(`/api/type_mapping_manage/init_all_sources?config_path=${encodeURIComponent(configPath)}`, {
+          method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ 批量初始化成功！\n\n总源数: ${data.data.total_sources}\n总类型数: ${data.data.total_types}\n已映射类型数: ${data.data.total_mapped}\n\n详细结果:\n${JSON.stringify(data.data, null, 2)}`;
+          showToast('批量初始化成功', 'success');
+          
+          // 刷新源列表
+          await loadSourceList();
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ 初始化失败: ${data.message}`;
+          showToast('初始化失败: ' + data.message, 'error');
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ 请求失败: ${error.message}`;
+        showToast('请求失败: ' + error.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html> 

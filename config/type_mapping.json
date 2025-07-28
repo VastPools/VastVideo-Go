@@ -1,0 +1,3393 @@
+{
+  "version": "1.0.0",
+  "description": "视频类型映射配置 - 统一类型定义到各源类型的映射关系",
+  "last_updated": "2025-07-28T22:20:00Z",
+  "global_types": {
+    "adult": {
+      "id": "adult",
+      "name": "成人",
+      "description": "成人内容类型",
+      "priority": 7,
+      "enabled": false
+    },
+    "anime": {
+      "id": "anime",
+      "name": "动漫",
+      "description": "动漫类型",
+      "priority": 4,
+      "enabled": true
+    },
+    "documentary": {
+      "id": "documentary",
+      "name": "纪录片",
+      "description": "纪录片类型",
+      "priority": 5,
+      "enabled": true
+    },
+    "movie": {
+      "id": "movie",
+      "name": "电影",
+      "description": "电影类型",
+      "priority": 1,
+      "enabled": true
+    },
+    "sport": {
+      "id": "sport",
+      "name": "体育",
+      "description": "体育节目类型",
+      "priority": 6,
+      "enabled": true
+    },
+    "tv": {
+      "id": "tv",
+      "name": "电视剧",
+      "description": "电视剧类型",
+      "priority": 2,
+      "enabled": true
+    },
+    "variety": {
+      "id": "variety",
+      "name": "综艺",
+      "description": "综艺节目类型",
+      "priority": 3,
+      "enabled": true
+    }
+  },
+  "source_mappings": {
+    "baidu": {
+      "name": "百度云资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "电视剧",
+          "global_type": ""
+        },
+        {
+          "id": 3,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 6,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "大陆剧",
+          "global_type": ""
+        },
+        {
+          "id": 14,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 15,
+          "name": "韩剧",
+          "global_type": ""
+        },
+        {
+          "id": 16,
+          "name": "日剧",
+          "global_type": ""
+        },
+        {
+          "id": 17,
+          "name": "港澳剧",
+          "global_type": ""
+        },
+        {
+          "id": 18,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 19,
+          "name": "泰剧",
+          "global_type": ""
+        },
+        {
+          "id": 20,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 23,
+          "name": "其他剧",
+          "global_type": ""
+        },
+        {
+          "id": 25,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 26,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 27,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 28,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 29,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 30,
+          "name": "日韩动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 31,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 39,
+          "name": "动画电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 44,
+          "name": "港台动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 45,
+          "name": "海外动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 47,
+          "name": "演唱会",
+          "global_type": ""
+        },
+        {
+          "id": 48,
+          "name": "体育赛事",
+          "global_type": "sport"
+        },
+        {
+          "id": 49,
+          "name": "篮球",
+          "global_type": "sport"
+        },
+        {
+          "id": 50,
+          "name": "足球",
+          "global_type": "sport"
+        },
+        {
+          "id": 51,
+          "name": "预告片",
+          "global_type": ""
+        },
+        {
+          "id": 52,
+          "name": "斯诺克",
+          "global_type": "sport"
+        },
+        {
+          "id": 53,
+          "name": "影视解说",
+          "global_type": ""
+        },
+        {
+          "id": 54,
+          "name": "爽文短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 55,
+          "name": "伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 56,
+          "name": "港台三级",
+          "global_type": ""
+        },
+        {
+          "id": 57,
+          "name": "韩国伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 58,
+          "name": "西方伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 59,
+          "name": "日本伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 60,
+          "name": "两性课堂",
+          "global_type": ""
+        },
+        {
+          "id": 61,
+          "name": "写真热舞",
+          "global_type": ""
+        },
+        {
+          "id": 62,
+          "name": "4K电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 63,
+          "name": "有声动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 64,
+          "name": "女频恋爱",
+          "global_type": ""
+        },
+        {
+          "id": 65,
+          "name": "反转爽剧",
+          "global_type": ""
+        },
+        {
+          "id": 66,
+          "name": "古装仙侠",
+          "global_type": ""
+        },
+        {
+          "id": 67,
+          "name": "年代穿越",
+          "global_type": ""
+        },
+        {
+          "id": 68,
+          "name": "脑洞悬疑",
+          "global_type": ""
+        },
+        {
+          "id": 69,
+          "name": "现代都市",
+          "global_type": ""
+        },
+        {
+          "id": 70,
+          "name": "邵氏电影",
+          "global_type": "movie"
+        }
+      ]
+    },
+    "bfzy": {
+      "name": "暴风资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "电视剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 3,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 5,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 6,
+          "name": "体育",
+          "global_type": "sport"
+        },
+        {
+          "id": 20,
+          "name": "电影片",
+          "global_type": "movie"
+        },
+        {
+          "id": 21,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 22,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 23,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 24,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 25,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 26,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 27,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 28,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 29,
+          "name": "理论片",
+          "global_type": "movie"
+        },
+        {
+          "id": 30,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 31,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 32,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 33,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 34,
+          "name": "韩国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 35,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 36,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 37,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 38,
+          "name": "泰国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 39,
+          "name": "动漫片",
+          "global_type": "anime"
+        },
+        {
+          "id": 40,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 41,
+          "name": "日韩动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 42,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 43,
+          "name": "港台动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 44,
+          "name": "海外动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 45,
+          "name": "综艺片",
+          "global_type": "variety"
+        },
+        {
+          "id": 46,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 47,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 48,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 49,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 50,
+          "name": "动画片",
+          "global_type": "movie"
+        },
+        {
+          "id": 51,
+          "name": "电影解说",
+          "global_type": "movie"
+        },
+        {
+          "id": 52,
+          "name": "预告片",
+          "global_type": ""
+        },
+        {
+          "id": 53,
+          "name": "体育赛事",
+          "global_type": "sport"
+        },
+        {
+          "id": 54,
+          "name": "足球",
+          "global_type": "sport"
+        },
+        {
+          "id": 55,
+          "name": "篮球",
+          "global_type": "sport"
+        },
+        {
+          "id": 56,
+          "name": "网球",
+          "global_type": "sport"
+        },
+        {
+          "id": 57,
+          "name": "斯诺克",
+          "global_type": "sport"
+        },
+        {
+          "id": 58,
+          "name": "短剧大全",
+          "global_type": "tv"
+        },
+        {
+          "id": 65,
+          "name": "重生民国",
+          "global_type": ""
+        },
+        {
+          "id": 66,
+          "name": "穿越年代",
+          "global_type": ""
+        },
+        {
+          "id": 67,
+          "name": "现代言情",
+          "global_type": ""
+        },
+        {
+          "id": 68,
+          "name": "反转爽文",
+          "global_type": ""
+        },
+        {
+          "id": 69,
+          "name": "女恋总裁",
+          "global_type": ""
+        },
+        {
+          "id": 70,
+          "name": "闪婚离婚",
+          "global_type": ""
+        },
+        {
+          "id": 71,
+          "name": "都市脑洞",
+          "global_type": ""
+        },
+        {
+          "id": 72,
+          "name": "古装仙侠",
+          "global_type": ""
+        },
+        {
+          "id": 73,
+          "name": "福利",
+          "global_type": "adult"
+        }
+      ]
+    },
+    "dbzy": {
+      "name": "豆瓣资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 3,
+          "name": "综艺片",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 5,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 6,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 14,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 15,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 16,
+          "name": "韩剧",
+          "global_type": ""
+        },
+        {
+          "id": 20,
+          "name": "动漫电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 21,
+          "name": "泰国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 22,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 23,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 24,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 25,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 26,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 27,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 28,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 29,
+          "name": "演唱会",
+          "global_type": ""
+        },
+        {
+          "id": 30,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 31,
+          "name": "日本动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 32,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 33,
+          "name": "海外动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 34,
+          "name": "伦理片",
+          "global_type": "adult"
+        },
+        {
+          "id": 35,
+          "name": "新闻资讯",
+          "global_type": ""
+        },
+        {
+          "id": 36,
+          "name": "体育赛事",
+          "global_type": "sport"
+        },
+        {
+          "id": 37,
+          "name": "短剧大全",
+          "global_type": "tv"
+        },
+        {
+          "id": 38,
+          "name": "篮球",
+          "global_type": "sport"
+        },
+        {
+          "id": 39,
+          "name": "足球",
+          "global_type": "sport"
+        },
+        {
+          "id": 40,
+          "name": "网球",
+          "global_type": "sport"
+        },
+        {
+          "id": 41,
+          "name": "斯诺克",
+          "global_type": "sport"
+        },
+        {
+          "id": 42,
+          "name": "LPL",
+          "global_type": ""
+        },
+        {
+          "id": 43,
+          "name": "重生民国",
+          "global_type": ""
+        },
+        {
+          "id": 44,
+          "name": "穿越现代",
+          "global_type": ""
+        },
+        {
+          "id": 45,
+          "name": "反转爽剧",
+          "global_type": ""
+        },
+        {
+          "id": 46,
+          "name": "言情总裁",
+          "global_type": ""
+        },
+        {
+          "id": 47,
+          "name": "现代都市",
+          "global_type": ""
+        },
+        {
+          "id": 48,
+          "name": "古装仙侠",
+          "global_type": ""
+        },
+        {
+          "id": 49,
+          "name": "悬疑烧脑",
+          "global_type": ""
+        },
+        {
+          "id": 50,
+          "name": "惊悚片",
+          "global_type": ""
+        },
+        {
+          "id": 51,
+          "name": "电影资讯",
+          "global_type": "movie"
+        },
+        {
+          "id": 52,
+          "name": "娱乐新闻",
+          "global_type": "variety"
+        }
+      ]
+    },
+    "dyttzy": {
+      "name": "电影天堂资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "电视剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 3,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 5,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 6,
+          "name": "体育",
+          "global_type": "sport"
+        }
+      ]
+    },
+    "heimuer": {
+      "name": "黑木耳",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "电视剧",
+          "global_type": ""
+        },
+        {
+          "id": 3,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 4,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 6,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "冒险片",
+          "global_type": ""
+        },
+        {
+          "id": 9,
+          "name": "同性片",
+          "global_type": ""
+        },
+        {
+          "id": 10,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "奇幻片",
+          "global_type": ""
+        },
+        {
+          "id": 12,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 14,
+          "name": "港剧",
+          "global_type": ""
+        },
+        {
+          "id": 15,
+          "name": "韩剧",
+          "global_type": ""
+        },
+        {
+          "id": 16,
+          "name": "日剧",
+          "global_type": ""
+        },
+        {
+          "id": 20,
+          "name": "悬疑片",
+          "global_type": ""
+        },
+        {
+          "id": 21,
+          "name": "惊悚片",
+          "global_type": ""
+        },
+        {
+          "id": 22,
+          "name": "灾难片",
+          "global_type": ""
+        },
+        {
+          "id": 23,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 24,
+          "name": "犯罪片",
+          "global_type": ""
+        },
+        {
+          "id": 25,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 26,
+          "name": "动画电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 27,
+          "name": "短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 28,
+          "name": "泰剧",
+          "global_type": ""
+        },
+        {
+          "id": 29,
+          "name": "台剧",
+          "global_type": ""
+        },
+        {
+          "id": 30,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 31,
+          "name": "新马剧",
+          "global_type": ""
+        },
+        {
+          "id": 32,
+          "name": "其他剧",
+          "global_type": ""
+        },
+        {
+          "id": 33,
+          "name": "歌舞片",
+          "global_type": ""
+        },
+        {
+          "id": 34,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 35,
+          "name": "经典片",
+          "global_type": ""
+        },
+        {
+          "id": 36,
+          "name": "网络电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 37,
+          "name": "其它片",
+          "global_type": ""
+        },
+        {
+          "id": 38,
+          "name": "国产综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 39,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 40,
+          "name": "韩国综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 41,
+          "name": "日本综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 42,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 43,
+          "name": "新马泰综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 44,
+          "name": "其他综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 45,
+          "name": "古装短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 46,
+          "name": "虐恋短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 47,
+          "name": "逆袭短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 48,
+          "name": "悬疑短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 49,
+          "name": "神豪短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 50,
+          "name": "重生短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 51,
+          "name": "复仇短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 52,
+          "name": "穿越短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 53,
+          "name": "甜宠短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 54,
+          "name": "强者短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 55,
+          "name": "萌宝短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 56,
+          "name": "其它短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 57,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 58,
+          "name": "日本动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 59,
+          "name": "韩国动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 60,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 61,
+          "name": "港台动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 62,
+          "name": "新马泰动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 63,
+          "name": "其它动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 64,
+          "name": "合集短剧",
+          "global_type": "tv"
+        }
+      ]
+    },
+    "ikun": {
+      "name": "iKun资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 3,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 5,
+          "name": "伦理片",
+          "global_type": "adult"
+        },
+        {
+          "id": 6,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "惊悚片",
+          "global_type": ""
+        },
+        {
+          "id": 14,
+          "name": "家庭片",
+          "global_type": ""
+        },
+        {
+          "id": 15,
+          "name": "古装片",
+          "global_type": ""
+        },
+        {
+          "id": 16,
+          "name": "历史片",
+          "global_type": ""
+        },
+        {
+          "id": 17,
+          "name": "悬疑片",
+          "global_type": ""
+        },
+        {
+          "id": 18,
+          "name": "犯罪片",
+          "global_type": ""
+        },
+        {
+          "id": 19,
+          "name": "灾难片",
+          "global_type": ""
+        },
+        {
+          "id": 20,
+          "name": "记录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 21,
+          "name": "短片",
+          "global_type": ""
+        },
+        {
+          "id": 22,
+          "name": "动画片",
+          "global_type": "movie"
+        },
+        {
+          "id": 23,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 24,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 25,
+          "name": "韩国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 26,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 27,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 28,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 29,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 30,
+          "name": "泰国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 31,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 32,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 33,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 34,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 35,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 36,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 37,
+          "name": "日本动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 40,
+          "name": "体育",
+          "global_type": "sport"
+        },
+        {
+          "id": 41,
+          "name": "足球",
+          "global_type": "sport"
+        },
+        {
+          "id": 43,
+          "name": "内地明星",
+          "global_type": ""
+        },
+        {
+          "id": 44,
+          "name": "港台明星",
+          "global_type": ""
+        },
+        {
+          "id": 45,
+          "name": "爽文短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 46,
+          "name": "德甲",
+          "global_type": ""
+        },
+        {
+          "id": 47,
+          "name": "意甲",
+          "global_type": ""
+        },
+        {
+          "id": 48,
+          "name": "英超",
+          "global_type": ""
+        },
+        {
+          "id": 49,
+          "name": "西甲",
+          "global_type": ""
+        },
+        {
+          "id": 50,
+          "name": "法甲",
+          "global_type": ""
+        },
+        {
+          "id": 51,
+          "name": "NBA",
+          "global_type": ""
+        },
+        {
+          "id": 52,
+          "name": "CBA",
+          "global_type": ""
+        },
+        {
+          "id": 53,
+          "name": "LPL",
+          "global_type": ""
+        },
+        {
+          "id": 54,
+          "name": "WCBA",
+          "global_type": ""
+        },
+        {
+          "id": 55,
+          "name": "篮球",
+          "global_type": "sport"
+        },
+        {
+          "id": 56,
+          "name": "里番动漫",
+          "global_type": "anime"
+        }
+      ]
+    },
+    "mdzy": {
+      "name": "魔都资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 2,
+          "name": "日韩动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 3,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 4,
+          "name": "港台动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 5,
+          "name": "动漫电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 6,
+          "name": "里番动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 7,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 9,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 10,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 14,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 15,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 16,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 17,
+          "name": "惊悚片",
+          "global_type": ""
+        },
+        {
+          "id": 18,
+          "name": "家庭片",
+          "global_type": ""
+        },
+        {
+          "id": 19,
+          "name": "古装片",
+          "global_type": ""
+        },
+        {
+          "id": 20,
+          "name": "历史片",
+          "global_type": ""
+        },
+        {
+          "id": 21,
+          "name": "悬疑片",
+          "global_type": ""
+        },
+        {
+          "id": 22,
+          "name": "犯罪片",
+          "global_type": ""
+        },
+        {
+          "id": 23,
+          "name": "灾难片",
+          "global_type": ""
+        },
+        {
+          "id": 24,
+          "name": "记录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 25,
+          "name": "短片",
+          "global_type": ""
+        },
+        {
+          "id": 26,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 27,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 28,
+          "name": "韩国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 29,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 30,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 31,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 32,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 33,
+          "name": "泰国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 34,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 35,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 36,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 37,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 38,
+          "name": "短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 39,
+          "name": "伦理片",
+          "global_type": "adult"
+        }
+      ]
+    },
+    "mozhua": {
+      "name": "魔爪资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 6,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 20,
+          "name": "记录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 21,
+          "name": "悬疑片",
+          "global_type": ""
+        },
+        {
+          "id": 22,
+          "name": "动画片",
+          "global_type": "movie"
+        },
+        {
+          "id": 23,
+          "name": "犯罪片",
+          "global_type": ""
+        },
+        {
+          "id": 24,
+          "name": "奇幻片",
+          "global_type": ""
+        },
+        {
+          "id": 25,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 26,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 27,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 28,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 29,
+          "name": "美国剧",
+          "global_type": ""
+        },
+        {
+          "id": 30,
+          "name": "韩国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 31,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 32,
+          "name": "泰国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 33,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 34,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 35,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 36,
+          "name": "日韩动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 37,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 38,
+          "name": "港台动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 39,
+          "name": "海外动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 40,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 41,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 42,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 43,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 44,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 45,
+          "name": "冒险片",
+          "global_type": ""
+        },
+        {
+          "id": 46,
+          "name": "惊悚片",
+          "global_type": ""
+        },
+        {
+          "id": 47,
+          "name": "短剧",
+          "global_type": "tv"
+        }
+      ]
+    },
+    "ruyi": {
+      "name": "如意资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影片",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 3,
+          "name": "综艺片",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫片",
+          "global_type": "anime"
+        },
+        {
+          "id": 7,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 6,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 14,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 15,
+          "name": "韩国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 16,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 20,
+          "name": "记录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 21,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 22,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 23,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 24,
+          "name": "泰国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 25,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 26,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 27,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 28,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 29,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 30,
+          "name": "日韩动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 31,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 32,
+          "name": "港台动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 33,
+          "name": "海外动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 34,
+          "name": "伦理片",
+          "global_type": "adult"
+        },
+        {
+          "id": 35,
+          "name": "电影解说",
+          "global_type": "movie"
+        },
+        {
+          "id": 36,
+          "name": "体育",
+          "global_type": "sport"
+        },
+        {
+          "id": 37,
+          "name": "足球",
+          "global_type": "sport"
+        },
+        {
+          "id": 38,
+          "name": "篮球",
+          "global_type": "sport"
+        },
+        {
+          "id": 39,
+          "name": "网球",
+          "global_type": "sport"
+        },
+        {
+          "id": 40,
+          "name": "斯诺克",
+          "global_type": "sport"
+        },
+        {
+          "id": 45,
+          "name": "预告片",
+          "global_type": ""
+        },
+        {
+          "id": 46,
+          "name": "短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 47,
+          "name": "动画电影",
+          "global_type": "movie"
+        }
+      ]
+    },
+    "tyyszy": {
+      "name": "天涯资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 20,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 21,
+          "name": "喜剧",
+          "global_type": "movie"
+        },
+        {
+          "id": 22,
+          "name": "爱情",
+          "global_type": "movie"
+        },
+        {
+          "id": 23,
+          "name": "动作",
+          "global_type": "movie"
+        },
+        {
+          "id": 24,
+          "name": "犯罪",
+          "global_type": ""
+        },
+        {
+          "id": 25,
+          "name": "科幻",
+          "global_type": "movie"
+        },
+        {
+          "id": 26,
+          "name": "奇幻",
+          "global_type": ""
+        },
+        {
+          "id": 27,
+          "name": "冒险",
+          "global_type": ""
+        },
+        {
+          "id": 28,
+          "name": "灾难",
+          "global_type": ""
+        },
+        {
+          "id": 29,
+          "name": "恐怖",
+          "global_type": "movie"
+        },
+        {
+          "id": 30,
+          "name": "惊悚",
+          "global_type": ""
+        },
+        {
+          "id": 31,
+          "name": "剧情",
+          "global_type": "movie"
+        },
+        {
+          "id": 32,
+          "name": "战争",
+          "global_type": "movie"
+        },
+        {
+          "id": 33,
+          "name": "歌舞",
+          "global_type": ""
+        },
+        {
+          "id": 34,
+          "name": "经典",
+          "global_type": ""
+        },
+        {
+          "id": 35,
+          "name": "悬疑",
+          "global_type": ""
+        },
+        {
+          "id": 36,
+          "name": "动画",
+          "global_type": "anime"
+        },
+        {
+          "id": 37,
+          "name": "同性",
+          "global_type": ""
+        },
+        {
+          "id": 38,
+          "name": "网络电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 39,
+          "name": "电视剧",
+          "global_type": ""
+        },
+        {
+          "id": 40,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 41,
+          "name": "港台剧",
+          "global_type": ""
+        },
+        {
+          "id": 42,
+          "name": "日韩剧",
+          "global_type": ""
+        },
+        {
+          "id": 43,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 44,
+          "name": "其他剧",
+          "global_type": ""
+        },
+        {
+          "id": 45,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 46,
+          "name": "国产综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 47,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 48,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 49,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 50,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 51,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 52,
+          "name": "日本动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 53,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 54,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 55,
+          "name": "抢先版",
+          "global_type": ""
+        }
+      ]
+    },
+    "wolong": {
+      "name": "卧龙资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影片",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 3,
+          "name": "综艺片",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫片",
+          "global_type": "anime"
+        },
+        {
+          "id": 5,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 6,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 13,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 14,
+          "name": "韩国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 15,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 16,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 17,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 18,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 22,
+          "name": "记录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 23,
+          "name": "短片",
+          "global_type": ""
+        },
+        {
+          "id": 24,
+          "name": "动画片",
+          "global_type": "movie"
+        },
+        {
+          "id": 25,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 26,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 27,
+          "name": "日本动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 30,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 31,
+          "name": "韩国综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 32,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 33,
+          "name": "泰国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 37,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 38,
+          "name": "电影解说",
+          "global_type": "movie"
+        },
+        {
+          "id": 39,
+          "name": "惊悚片",
+          "global_type": ""
+        },
+        {
+          "id": 42,
+          "name": "家庭片",
+          "global_type": ""
+        },
+        {
+          "id": 43,
+          "name": "古装片",
+          "global_type": ""
+        },
+        {
+          "id": 44,
+          "name": "历史片",
+          "global_type": ""
+        },
+        {
+          "id": 45,
+          "name": "悬疑片",
+          "global_type": ""
+        },
+        {
+          "id": 46,
+          "name": "犯罪片",
+          "global_type": ""
+        },
+        {
+          "id": 49,
+          "name": "伦理片",
+          "global_type": "adult"
+        },
+        {
+          "id": 54,
+          "name": "短剧",
+          "global_type": "tv"
+        }
+      ]
+    },
+    "wujin": {
+      "name": "无尽资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 3,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 5,
+          "name": "资讯",
+          "global_type": ""
+        },
+        {
+          "id": 6,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 14,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 15,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 16,
+          "name": "美国剧",
+          "global_type": ""
+        },
+        {
+          "id": 17,
+          "name": "公告",
+          "global_type": ""
+        },
+        {
+          "id": 18,
+          "name": "头条",
+          "global_type": ""
+        },
+        {
+          "id": 20,
+          "name": "伦理片",
+          "global_type": "adult"
+        },
+        {
+          "id": 21,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 22,
+          "name": "韩国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 23,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 24,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 25,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 26,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 27,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 28,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 29,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 30,
+          "name": "日韩动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 31,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 32,
+          "name": "悬疑片",
+          "global_type": ""
+        },
+        {
+          "id": 33,
+          "name": "动画片",
+          "global_type": "movie"
+        },
+        {
+          "id": 34,
+          "name": "犯罪片",
+          "global_type": ""
+        },
+        {
+          "id": 35,
+          "name": "奇幻片",
+          "global_type": ""
+        },
+        {
+          "id": 36,
+          "name": "邵氏电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 37,
+          "name": "泰剧",
+          "global_type": ""
+        },
+        {
+          "id": 38,
+          "name": "体育赛事",
+          "global_type": "sport"
+        },
+        {
+          "id": 39,
+          "name": "篮球",
+          "global_type": "sport"
+        },
+        {
+          "id": 40,
+          "name": "影视解说",
+          "global_type": ""
+        },
+        {
+          "id": 41,
+          "name": "短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 42,
+          "name": "港台动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 43,
+          "name": "海外动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 44,
+          "name": "演唱会",
+          "global_type": ""
+        },
+        {
+          "id": 45,
+          "name": "足球",
+          "global_type": "sport"
+        },
+        {
+          "id": 46,
+          "name": "预告片",
+          "global_type": ""
+        },
+        {
+          "id": 47,
+          "name": "港台三级",
+          "global_type": ""
+        },
+        {
+          "id": 48,
+          "name": "韩国伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 49,
+          "name": "西方伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 50,
+          "name": "日本伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 51,
+          "name": "两性课堂",
+          "global_type": ""
+        },
+        {
+          "id": 52,
+          "name": "写真热舞",
+          "global_type": ""
+        },
+        {
+          "id": 53,
+          "name": "有声动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 54,
+          "name": "女频恋爱",
+          "global_type": ""
+        },
+        {
+          "id": 55,
+          "name": "反转爽剧",
+          "global_type": ""
+        },
+        {
+          "id": 56,
+          "name": "脑洞悬疑",
+          "global_type": ""
+        },
+        {
+          "id": 57,
+          "name": "年代穿越",
+          "global_type": ""
+        },
+        {
+          "id": 58,
+          "name": "古装仙侠",
+          "global_type": ""
+        },
+        {
+          "id": 59,
+          "name": "现代都市",
+          "global_type": ""
+        },
+        {
+          "id": 60,
+          "name": "Netflix电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 61,
+          "name": "Netflix自制剧",
+          "global_type": ""
+        }
+      ]
+    },
+    "wwzy": {
+      "name": "旺旺短剧",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 2,
+          "name": "分类2",
+          "global_type": ""
+        },
+        {
+          "id": 3,
+          "name": "分类3",
+          "global_type": ""
+        },
+        {
+          "id": 4,
+          "name": "分类4",
+          "global_type": ""
+        },
+        {
+          "id": 5,
+          "name": "教程",
+          "global_type": ""
+        },
+        {
+          "id": 6,
+          "name": "子类1",
+          "global_type": ""
+        },
+        {
+          "id": 7,
+          "name": "子类2",
+          "global_type": ""
+        },
+        {
+          "id": 8,
+          "name": "子类3",
+          "global_type": ""
+        },
+        {
+          "id": 9,
+          "name": "子类4",
+          "global_type": ""
+        },
+        {
+          "id": 10,
+          "name": "子类5",
+          "global_type": ""
+        },
+        {
+          "id": 11,
+          "name": "子类6",
+          "global_type": ""
+        },
+        {
+          "id": 12,
+          "name": "子类7",
+          "global_type": ""
+        },
+        {
+          "id": 13,
+          "name": "子类8",
+          "global_type": ""
+        },
+        {
+          "id": 14,
+          "name": "子类9",
+          "global_type": ""
+        },
+        {
+          "id": 15,
+          "name": "子类10",
+          "global_type": ""
+        },
+        {
+          "id": 16,
+          "name": "子类11",
+          "global_type": ""
+        },
+        {
+          "id": 17,
+          "name": "采集教程",
+          "global_type": ""
+        },
+        {
+          "id": 18,
+          "name": "其他教程",
+          "global_type": ""
+        }
+      ]
+    },
+    "zuid": {
+      "name": "最大资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "电视剧",
+          "global_type": ""
+        },
+        {
+          "id": 3,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 6,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 14,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 15,
+          "name": "韩剧",
+          "global_type": ""
+        },
+        {
+          "id": 16,
+          "name": "日剧",
+          "global_type": ""
+        },
+        {
+          "id": 17,
+          "name": "港剧",
+          "global_type": ""
+        },
+        {
+          "id": 18,
+          "name": "台剧",
+          "global_type": ""
+        },
+        {
+          "id": 19,
+          "name": "泰剧",
+          "global_type": ""
+        },
+        {
+          "id": 20,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 23,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 25,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 26,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 27,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 28,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 29,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 30,
+          "name": "日韩动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 31,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 39,
+          "name": "动画片",
+          "global_type": "movie"
+        },
+        {
+          "id": 44,
+          "name": "港台动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 45,
+          "name": "海外动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 47,
+          "name": "演唱会",
+          "global_type": ""
+        },
+        {
+          "id": 48,
+          "name": "体育赛事",
+          "global_type": "sport"
+        },
+        {
+          "id": 49,
+          "name": "篮球",
+          "global_type": "sport"
+        },
+        {
+          "id": 50,
+          "name": "足球",
+          "global_type": "sport"
+        },
+        {
+          "id": 51,
+          "name": "预告片",
+          "global_type": ""
+        },
+        {
+          "id": 52,
+          "name": "斯诺克",
+          "global_type": "sport"
+        },
+        {
+          "id": 53,
+          "name": "影视解说",
+          "global_type": ""
+        },
+        {
+          "id": 54,
+          "name": "爽文短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 55,
+          "name": "伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 56,
+          "name": "港台三级",
+          "global_type": ""
+        },
+        {
+          "id": 57,
+          "name": "韩国伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 58,
+          "name": "西方伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 59,
+          "name": "日本伦理",
+          "global_type": "adult"
+        },
+        {
+          "id": 60,
+          "name": "两性课堂",
+          "global_type": ""
+        },
+        {
+          "id": 61,
+          "name": "写真热舞",
+          "global_type": ""
+        },
+        {
+          "id": 62,
+          "name": "4K电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 63,
+          "name": "有声动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 64,
+          "name": "女频恋爱",
+          "global_type": ""
+        },
+        {
+          "id": 65,
+          "name": "反转爽剧",
+          "global_type": ""
+        },
+        {
+          "id": 66,
+          "name": "古装仙侠",
+          "global_type": ""
+        },
+        {
+          "id": 67,
+          "name": "年代穿越",
+          "global_type": ""
+        },
+        {
+          "id": 68,
+          "name": "脑洞悬疑",
+          "global_type": ""
+        },
+        {
+          "id": 69,
+          "name": "现代都市",
+          "global_type": ""
+        },
+        {
+          "id": 70,
+          "name": "邵氏电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 71,
+          "name": "Netflix电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 72,
+          "name": "Netflix自制剧",
+          "global_type": ""
+        }
+      ]
+    },
+    "zy360": {
+      "name": "360资源",
+      "enabled": true,
+      "type_list": [
+        {
+          "id": 1,
+          "name": "电影",
+          "global_type": "movie"
+        },
+        {
+          "id": 2,
+          "name": "连续剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 3,
+          "name": "综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 4,
+          "name": "动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 5,
+          "name": "伦理片",
+          "global_type": "adult"
+        },
+        {
+          "id": 6,
+          "name": "动作片",
+          "global_type": "movie"
+        },
+        {
+          "id": 7,
+          "name": "喜剧片",
+          "global_type": "movie"
+        },
+        {
+          "id": 8,
+          "name": "爱情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 9,
+          "name": "科幻片",
+          "global_type": "movie"
+        },
+        {
+          "id": 10,
+          "name": "恐怖片",
+          "global_type": "movie"
+        },
+        {
+          "id": 11,
+          "name": "剧情片",
+          "global_type": "movie"
+        },
+        {
+          "id": 12,
+          "name": "战争片",
+          "global_type": "movie"
+        },
+        {
+          "id": 13,
+          "name": "国产剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 14,
+          "name": "香港剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 15,
+          "name": "韩国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 16,
+          "name": "欧美剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 17,
+          "name": "体育",
+          "global_type": "sport"
+        },
+        {
+          "id": 18,
+          "name": "NBA",
+          "global_type": ""
+        },
+        {
+          "id": 20,
+          "name": "惊悚片",
+          "global_type": ""
+        },
+        {
+          "id": 21,
+          "name": "家庭篇",
+          "global_type": ""
+        },
+        {
+          "id": 22,
+          "name": "古装片",
+          "global_type": ""
+        },
+        {
+          "id": 23,
+          "name": "历史片",
+          "global_type": ""
+        },
+        {
+          "id": 24,
+          "name": "悬疑片",
+          "global_type": ""
+        },
+        {
+          "id": 25,
+          "name": "犯罪片",
+          "global_type": ""
+        },
+        {
+          "id": 26,
+          "name": "灾难片",
+          "global_type": ""
+        },
+        {
+          "id": 27,
+          "name": "纪录片",
+          "global_type": "documentary"
+        },
+        {
+          "id": 28,
+          "name": "短片",
+          "global_type": ""
+        },
+        {
+          "id": 29,
+          "name": "动画片",
+          "global_type": "movie"
+        },
+        {
+          "id": 30,
+          "name": "台湾剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 31,
+          "name": "日本剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 32,
+          "name": "海外剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 33,
+          "name": "泰国剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 34,
+          "name": "大陆综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 35,
+          "name": "港台综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 36,
+          "name": "日韩综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 37,
+          "name": "欧美综艺",
+          "global_type": "variety"
+        },
+        {
+          "id": 38,
+          "name": "国产动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 39,
+          "name": "欧美动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 40,
+          "name": "日韩动漫",
+          "global_type": "anime"
+        },
+        {
+          "id": 41,
+          "name": "足球",
+          "global_type": "sport"
+        },
+        {
+          "id": 42,
+          "name": "篮球",
+          "global_type": "sport"
+        },
+        {
+          "id": 43,
+          "name": "未分类",
+          "global_type": ""
+        },
+        {
+          "id": 45,
+          "name": "西部片",
+          "global_type": ""
+        },
+        {
+          "id": 46,
+          "name": "爽文短剧",
+          "global_type": "tv"
+        },
+        {
+          "id": 47,
+          "name": "现代都市",
+          "global_type": ""
+        },
+        {
+          "id": 48,
+          "name": "脑洞悬疑",
+          "global_type": ""
+        },
+        {
+          "id": 49,
+          "name": "年代穿越",
+          "global_type": ""
+        },
+        {
+          "id": 50,
+          "name": "古装仙侠",
+          "global_type": ""
+        },
+        {
+          "id": 51,
+          "name": "反转爽剧",
+          "global_type": ""
+        },
+        {
+          "id": 52,
+          "name": "女频恋爱",
+          "global_type": ""
+        },
+        {
+          "id": 53,
+          "name": "成长逆袭",
+          "global_type": ""
+        }
+      ]
+    }
+  }
+}

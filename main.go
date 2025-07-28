@@ -22,10 +22,10 @@ import (
 	"vastproxy-go/utils"
 )
 
-//go:embed html/index_mobile.html html/about.html
+//go:embed html/index_mobile.html html/about.html html/type_mapping.html test_sources.html
 var htmlContent embed.FS
 
-//go:embed config/config.ini
+//go:embed config/config.ini config/sources.json
 var ConfigContent embed.FS
 
 //go:embed html/check_sources.html
@@ -213,14 +213,26 @@ func main() {
 
 	// 初始化视频源配置
 	sourcesConfig := components.NewSourcesConfig()
-	configData, err := ConfigContent.ReadFile("config/config.ini")
+	sourcesData, err := ConfigContent.ReadFile("config/sources.json")
 	if err != nil {
-		log.Fatalf("❌ 读取配置文件失败: %v", err)
+		log.Fatalf("❌ 读取视频源配置文件失败: %v", err)
 	}
-	if err := sourcesConfig.LoadFromConfigFile(configData); err != nil {
+	if err := sourcesConfig.LoadFromConfigFile(sourcesData); err != nil {
 		log.Fatalf("❌ 加载视频源配置失败: %v", err)
 	}
 	log.Printf("✅ 视频源配置加载成功，共 %d 个源", len(sourcesConfig.GetSources()))
+
+	// 初始化类型映射管理器
+	typeMappingManager := components.NewTypeMappingManager("config/type_mapping.json")
+	if err := typeMappingManager.LoadConfig(); err != nil {
+		log.Printf("⚠️ 加载类型映射配置失败: %v，将使用默认配置", err)
+		// 如果配置文件不存在，可以创建一个默认配置
+	} else {
+		log.Printf("✅ 类型映射配置加载成功")
+	}
+
+	// 将类型映射管理器设置到视频源配置中
+	sourcesConfig.SetTypeMappingManager(typeMappingManager)
 
 	// 定义命令行参数
 	var (
@@ -265,6 +277,8 @@ func main() {
 		http.HandleFunc("/mobile", mobileHandler)
 		http.HandleFunc("/about", aboutHandler)
 		http.HandleFunc("/about.html", aboutHandler)
+		http.HandleFunc("/type_mapping", typeMappingHandler)
+		http.HandleFunc("/test_sources", testSourcesHandler)
 		http.HandleFunc("/", indexHandler)
 	}
 	if GlobalConfig.Features.DoubanAPI {
@@ -276,6 +290,14 @@ func main() {
 	// 添加视频源API路由
 	http.HandleFunc("/api/sources", sourcesConfig.HandleSourcesAPI)
 	http.HandleFunc("/api/source_search", sourcesConfig.HandleSourceSearchAPI)
+
+	// 添加类型映射API路由
+	http.HandleFunc("/api/type_mapping", typeMappingManager.HandleTypeMappingAPI)
+	http.HandleFunc("/api/type_mapping/", typeMappingManager.HandleTypeMappingAPI)
+
+	// 添加类型映射管理API路由
+	http.HandleFunc("/api/type_mapping_manage", typeMappingManager.HandleTypeMappingManageAPI)
+	http.HandleFunc("/api/type_mapping_manage/", typeMappingManager.HandleTypeMappingManageAPI)
 
 	// 添加过滤配置API路由
 	http.HandleFunc("/api/filter_config", filterConfigHandler)
@@ -301,6 +323,7 @@ func main() {
 		log.Printf("📄 信息页面: http://%s:%s/info", GlobalConfig.Server.Host, *port)
 		log.Printf("📱 移动端页面: http://%s:%s/mobile", GlobalConfig.Server.Host, *port)
 		log.Printf("🏠 首页(移动端): http://%s:%s/", GlobalConfig.Server.Host, *port)
+		log.Printf("🎯 类型映射管理: http://%s:%s/type_mapping", GlobalConfig.Server.Host, *port)
 	}
 	if GlobalConfig.Features.DoubanAPI {
 		log.Printf("🎬 豆瓣API: http://%s:%s/douban", GlobalConfig.Server.Host, *port)
@@ -433,6 +456,38 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(content)
 	log.Printf("📄 返回关于页面 html/about.html [IP:%s]", utils.GetRequestIP(r))
+}
+
+func typeMappingHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/type_mapping" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	content, err := htmlContent.ReadFile("html/type_mapping.html")
+	if err != nil {
+		log.Printf("❌ 读取 html/type_mapping.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	w.Write(content)
+	log.Printf("🎯 返回类型映射管理页面 html/type_mapping.html [IP:%s]", utils.GetRequestIP(r))
+}
+
+func testSourcesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/test_sources" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	content, err := htmlContent.ReadFile("test_sources.html")
+	if err != nil {
+		log.Printf("❌ 读取 test_sources.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	w.Write(content)
+	log.Printf("🧪 返回视频源测试页面 test_sources.html [IP:%s]", utils.GetRequestIP(r))
 }
 
 func filterConfigHandler(w http.ResponseWriter, r *http.Request) {

@@ -12,8 +12,6 @@ import (
 	"time"
 
 	"vastproxy-go/utils"
-
-	"gopkg.in/ini.v1"
 )
 
 // VideoSource 视频源结构
@@ -49,79 +47,66 @@ type SearchResponse struct {
 	Count   int         `json:"count"`
 }
 
+// VideoItemWithGlobalType 带全局类型的视频项目结构
+type VideoItemWithGlobalType struct {
+	VideoItem
+	GlobalType     string `json:"global_type"`
+	GlobalTypeName string `json:"global_type_name"`
+}
+
 // SourcesConfig 视频源配置管理器
 type SourcesConfig struct {
-	sources []VideoSource
+	sources            []VideoSource
+	typeMappingManager *TypeMappingManager
 }
 
 // NewSourcesConfig 创建新的视频源配置管理器
 func NewSourcesConfig() *SourcesConfig {
 	return &SourcesConfig{
-		sources: []VideoSource{},
+		sources:            []VideoSource{},
+		typeMappingManager: nil,
 	}
+}
+
+// SetTypeMappingManager 设置类型映射管理器
+func (sc *SourcesConfig) SetTypeMappingManager(tmm *TypeMappingManager) {
+	sc.typeMappingManager = tmm
 }
 
 // LoadFromConfigFile 从配置文件加载视频源
 func (sc *SourcesConfig) LoadFromConfigFile(configData []byte) error {
 	sc.sources = []VideoSource{}
 
-	// 解析INI配置文件
-	cfg, err := ini.Load(configData)
-	if err != nil {
-		return fmt.Errorf("解析配置文件失败: %v", err)
+	// 解析JSON配置文件
+	var config struct {
+		Sources map[string]struct {
+			Name      string `json:"name"`
+			URL       string `json:"url"`
+			IsDefault bool   `json:"is_default"`
+			Enabled   bool   `json:"enabled"`
+		} `json:"sources"`
 	}
 
-	// 从配置文件中读取 [sources] 部分
-	sourcesSection := cfg.Section("sources")
-	if sourcesSection == nil {
-		return fmt.Errorf("配置文件中未找到 [sources] 部分")
+	if err := json.Unmarshal(configData, &config); err != nil {
+		return fmt.Errorf("解析JSON配置文件失败: %v", err)
 	}
 
-	// 用于临时存储源数据的map
-	sourceMap := make(map[string]map[string]string)
-
-	// 遍历所有配置项
-	for _, key := range sourcesSection.KeyStrings() {
-		value := sourcesSection.Key(key).String()
-
-		// 解析 key 格式: code.field
-		parts := strings.Split(key, ".")
-		if len(parts) != 2 {
-			continue // 跳过格式不正确的配置
-		}
-
-		code := parts[0]
-		field := parts[1]
-
-		// 初始化源数据map
-		if sourceMap[code] == nil {
-			sourceMap[code] = make(map[string]string)
-		}
-
-		// 存储字段值
-		sourceMap[code][field] = strings.TrimSpace(value)
+	if config.Sources == nil {
+		return fmt.Errorf("配置文件中未找到 sources 部分")
 	}
 
-	// 从map构建VideoSource对象
-	for code, fields := range sourceMap {
-		// 检查必需字段
-		name, hasName := fields["name"]
-		url, hasURL := fields["url"]
-		if !hasName || !hasURL {
-			continue // 跳过缺少必需字段的配置
-		}
-
-		// 解析is_default字段，默认为false
-		isDefault := false
-		if isDefaultStr, hasIsDefault := fields["is_default"]; hasIsDefault {
-			isDefault = isDefaultStr == "1" || strings.ToLower(isDefaultStr) == "true"
+	// 从JSON配置构建VideoSource对象
+	for code, sourceConfig := range config.Sources {
+		// 只处理启用的源
+		if !sourceConfig.Enabled {
+			continue
 		}
 
 		source := VideoSource{
 			Code:      code,
-			Name:      name,
-			URL:       url,
-			IsDefault: isDefault,
+			Name:      sourceConfig.Name,
+			URL:       sourceConfig.URL,
+			IsDefault: sourceConfig.IsDefault,
 		}
 
 		sc.sources = append(sc.sources, source)
@@ -397,11 +382,13 @@ func (sc *SourcesConfig) searchSource(source *VideoSource, keyword, page string)
 		log.Printf("✅ 找到list字段，包含 %d 个视频", len(list))
 		for _, item := range list {
 			if videoMap, ok := item.(map[string]interface{}); ok {
+				typeName := getString(videoMap, "type_name")
+
 				video := VideoItem{
 					VodName:     getString(videoMap, "vod_name"),
 					VodPic:      getString(videoMap, "vod_pic"),
 					VodYear:     getString(videoMap, "vod_year"),
-					TypeName:    getString(videoMap, "type_name"),
+					TypeName:    typeName,
 					VodScore:    getString(videoMap, "vod_score"),
 					VodContent:  getString(videoMap, "vod_content"),
 					VodActor:    getString(videoMap, "vod_actor"),
@@ -412,6 +399,14 @@ func (sc *SourcesConfig) searchSource(source *VideoSource, keyword, page string)
 					VodRemarks:  getString(videoMap, "vod_remarks"),
 					VodPlayUrl:  getString(videoMap, "vod_play_url"),
 				}
+
+				// 如果启用了类型映射，尝试转换类型
+				if sc.typeMappingManager != nil && typeName != "" {
+					// 这里需要从视频数据中提取type_id，暂时跳过
+					// TODO: 从视频数据中提取type_id进行映射
+					log.Printf("🔗 类型映射: %s (源: %s) - 需要type_id进行映射", typeName, source.Code)
+				}
+
 				videos = append(videos, video)
 			}
 		}
