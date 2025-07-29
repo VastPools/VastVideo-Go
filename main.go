@@ -22,7 +22,7 @@ import (
 	"vastproxy-go/utils"
 )
 
-//go:embed html/index_mobile.html html/about.html html/type_mapping.html test_sources.html
+//go:embed html/index_mobile.html html/about.html html/type_mapping.html html/sources_manage.html test_sources.html
 var htmlContent embed.FS
 
 //go:embed config/config.ini config/sources.json
@@ -278,7 +278,12 @@ func main() {
 		http.HandleFunc("/about", aboutHandler)
 		http.HandleFunc("/about.html", aboutHandler)
 		http.HandleFunc("/type_mapping", typeMappingHandler)
+		http.HandleFunc("/sources_manage", sourcesManageHandler)
 		http.HandleFunc("/test_sources", testSourcesHandler)
+		http.HandleFunc("/test_sources_manage", testSourcesManageHandler)
+		http.HandleFunc("/demo", demoHandler)
+		http.HandleFunc("/sources_manage_preview", sourcesManagePreviewHandler)
+		http.HandleFunc("/manage", manageHandler)
 		http.HandleFunc("/", indexHandler)
 	}
 	if GlobalConfig.Features.DoubanAPI {
@@ -290,6 +295,11 @@ func main() {
 	// 添加视频源API路由
 	http.HandleFunc("/api/sources", sourcesConfig.HandleSourcesAPI)
 	http.HandleFunc("/api/source_search", sourcesConfig.HandleSourceSearchAPI)
+
+	// 添加视频源管理API路由
+	sourcesManageAPIHandler := components.NewSourcesManageHandler(sourcesConfig, "config/sources.json")
+	http.HandleFunc("/api/sources_manage/", sourcesManageAPIHandler.HandleSourcesManageAPI)
+	http.HandleFunc("/api/sources_manage", sourcesManageAPIHandler.HandleSourcesManageAPI)
 
 	// 添加类型映射API路由
 	http.HandleFunc("/api/type_mapping", typeMappingManager.HandleTypeMappingAPI)
@@ -324,6 +334,11 @@ func main() {
 		log.Printf("📱 移动端页面: http://%s:%s/mobile", GlobalConfig.Server.Host, *port)
 		log.Printf("🏠 首页(移动端): http://%s:%s/", GlobalConfig.Server.Host, *port)
 		log.Printf("🎯 类型映射管理: http://%s:%s/type_mapping", GlobalConfig.Server.Host, *port)
+		log.Printf("🔧 视频源管理: http://%s:%s/sources_manage", GlobalConfig.Server.Host, *port)
+		log.Printf("🧪 视频源管理测试: http://%s:%s/test_sources_manage", GlobalConfig.Server.Host, *port)
+		log.Printf("🎬 功能演示页面: http://%s:%s/demo", GlobalConfig.Server.Host, *port)
+		log.Printf("🎨 美化预览页面: http://%s:%s/sources_manage_preview", GlobalConfig.Server.Host, *port)
+		log.Printf("🎛️ 统一管理控制台: http://%s:%s/manage", GlobalConfig.Server.Host, *port)
 	}
 	if GlobalConfig.Features.DoubanAPI {
 		log.Printf("🎬 豆瓣API: http://%s:%s/douban", GlobalConfig.Server.Host, *port)
@@ -474,6 +489,22 @@ func typeMappingHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("🎯 返回类型映射管理页面 html/type_mapping.html [IP:%s]", utils.GetRequestIP(r))
 }
 
+func sourcesManageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/sources_manage" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	content, err := htmlContent.ReadFile("html/sources_manage.html")
+	if err != nil {
+		log.Printf("❌ 读取 html/sources_manage.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	w.Write(content)
+	log.Printf("🎯 返回视频源管理页面 html/sources_manage.html [IP:%s]", utils.GetRequestIP(r))
+}
+
 func testSourcesHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/test_sources" {
 		http.NotFound(w, r)
@@ -488,6 +519,70 @@ func testSourcesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(content)
 	log.Printf("🧪 返回视频源测试页面 test_sources.html [IP:%s]", utils.GetRequestIP(r))
+}
+
+func testSourcesManageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/test_sources_manage" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	content, err := os.ReadFile("test_sources_manage.html")
+	if err != nil {
+		log.Printf("❌ 读取 test_sources_manage.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	w.Write(content)
+	log.Printf("🧪 返回视频源管理测试页面 test_sources_manage.html [IP:%s]", utils.GetRequestIP(r))
+}
+
+func demoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/demo" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	content, err := os.ReadFile("test_sources_manage_demo.html")
+	if err != nil {
+		log.Printf("❌ 读取 test_sources_manage_demo.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	w.Write(content)
+	log.Printf("🎬 返回视频源管理演示页面 test_sources_manage_demo.html [IP:%s]", utils.GetRequestIP(r))
+}
+
+func sourcesManagePreviewHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/sources_manage_preview" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	content, err := os.ReadFile("html/sources_manage_preview.html")
+	if err != nil {
+		log.Printf("❌ 读取 html/sources_manage_preview.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	w.Write(content)
+	log.Printf("🎨 返回视频源管理美化预览页面 html/sources_manage_preview.html [IP:%s]", utils.GetRequestIP(r))
+}
+
+func manageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/manage" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	content, err := os.ReadFile("html/manage.html")
+	if err != nil {
+		log.Printf("❌ 读取 html/manage.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	w.Write(content)
+	log.Printf("🎛️ 返回统一管理控制台页面 html/manage.html [IP:%s]", utils.GetRequestIP(r))
 }
 
 func filterConfigHandler(w http.ResponseWriter, r *http.Request) {

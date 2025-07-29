@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频源管理 - 美化预览</title>
+    
+    <!-- Tailwind CSS + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .default-source {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left: 4px solid #ffc107;
+        }
+        
+        .default-source:hover {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <div class="container mx-auto px-4 py-8">
+        <!-- 头部卡片 -->
+        <div class="card glass-effect text-white mb-8 animate-fade-in">
+            <div class="card-body text-center">
+                <h1 class="text-4xl font-bold mb-2">
+                    <i class="fas fa-film mr-3"></i>视频源管理
+                </h1>
+                <p class="text-lg opacity-90">使用 Tailwind CSS + DaisyUI + jQuery 美化</p>
+            </div>
+        </div>
+
+        <!-- 功能展示 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- 工具栏卡片 -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fas fa-tools text-primary"></i>
+                        工具栏
+                    </h2>
+                    <p>现代化的按钮设计和图标</p>
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        <button class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus mr-1"></i>添加
+                        </button>
+                        <button class="btn btn-success btn-sm">
+                            <i class="fas fa-upload mr-1"></i>上传
+                        </button>
+                        <button class="btn btn-info btn-sm">
+                            <i class="fas fa-globe mr-1"></i>远程
+                        </button>
+                        <button class="btn btn-warning btn-sm">
+                            <i class="fas fa-sync-alt mr-1"></i>刷新
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 搜索框卡片 -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fas fa-search text-secondary"></i>
+                        搜索功能
+                    </h2>
+                    <p>实时搜索和过滤</p>
+                    <div class="form-control mt-4">
+                        <div class="input-group">
+                            <input type="text" placeholder="搜索视频源..." class="input input-bordered w-full">
+                            <button class="btn btn-square">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 状态标签卡片 -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fas fa-tags text-accent"></i>
+                        状态标签
+                    </h2>
+                    <p>彩色状态标识</p>
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        <div class="badge badge-success">启用</div>
+                        <div class="badge badge-error">禁用</div>
+                        <div class="badge badge-warning">默认</div>
+                        <div class="badge badge-ghost">否</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 表格展示 -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title mb-4">
+                    <i class="fas fa-table text-primary"></i>
+                    视频源列表
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>代码</th>
+                                <th>名称</th>
+                                <th>URL</th>
+                                <th>状态</th>
+                                <th>默认</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="default-source hover">
+                                <td><span class="font-mono font-bold">bfzy</span></td>
+                                <td>暴风资源</td>
+                                <td class="max-w-xs truncate" title="https://bfzyapi.com/api.php/provide/vod">
+                                    https://bfzyapi.com/api.php/provide/vod
+                                </td>
+                                <td>
+                                    <div class="badge badge-success">启用</div>
+                                </td>
+                                <td>
+                                    <div class="badge badge-warning">默认</div>
+                                </td>
+                                <td>
+                                    <div class="flex gap-2">
+                                        <button class="btn btn-xs btn-info">
+                                            <i class="fas fa-vial mr-1"></i>测试
+                                        </button>
+                                        <button class="btn btn-xs btn-warning">
+                                            <i class="fas fa-edit mr-1"></i>编辑
+                                        </button>
+                                        <button class="btn btn-xs btn-error">
+                                            <i class="fas fa-trash mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="hover">
+                                <td><span class="font-mono font-bold">heimuer</span></td>
+                                <td>黑木耳</td>
+                                <td class="max-w-xs truncate" title="https://json.heimuer.xyz/api.php/provide/vod">
+                                    https://json.heimuer.xyz/api.php/provide/vod
+                                </td>
+                                <td>
+                                    <div class="badge badge-success">启用</div>
+                                </td>
+                                <td>
+                                    <div class="badge badge-ghost">否</div>
+                                </td>
+                                <td>
+                                    <div class="flex gap-2">
+                                        <button class="btn btn-xs btn-info">
+                                            <i class="fas fa-vial mr-1"></i>测试
+                                        </button>
+                                        <button class="btn btn-xs btn-warning">
+                                            <i class="fas fa-edit mr-1"></i>编辑
+                                        </button>
+                                        <button class="btn btn-xs btn-error">
+                                            <i class="fas fa-trash mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="hover">
+                                <td><span class="font-mono font-bold">baidu</span></td>
+                                <td>百度云资源</td>
+                                <td class="max-w-xs truncate" title="https://api.apibdzy.com/api.php/provide/vod">
+                                    https://api.apibdzy.com/api.php/provide/vod
+                                </td>
+                                <td>
+                                    <div class="badge badge-error">禁用</div>
+                                </td>
+                                <td>
+                                    <div class="badge badge-ghost">否</div>
+                                </td>
+                                <td>
+                                    <div class="flex gap-2">
+                                        <button class="btn btn-xs btn-info">
+                                            <i class="fas fa-vial mr-1"></i>测试
+                                        </button>
+                                        <button class="btn btn-xs btn-warning">
+                                            <i class="fas fa-edit mr-1"></i>编辑
+                                        </button>
+                                        <button class="btn btn-xs btn-error">
+                                            <i class="fas fa-trash mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 模态框展示 -->
+        <div class="card bg-base-100 shadow-xl mt-8">
+            <div class="card-body">
+                <h2 class="card-title mb-4">
+                    <i class="fas fa-window-maximize text-primary"></i>
+                    模态框设计
+                </h2>
+                <p class="mb-4">现代化的模态框和表单设计</p>
+                <div class="flex flex-wrap gap-4">
+                    <button class="btn btn-primary" onclick="showDemoModal()">
+                        <i class="fas fa-plus mr-2"></i>添加源模态框
+                    </button>
+                    <button class="btn btn-success" onclick="showUploadDemo()">
+                        <i class="fas fa-upload mr-2"></i>上传模态框
+                    </button>
+                    <button class="btn btn-info" onclick="showTestDemo()">
+                        <i class="fas fa-vial mr-2"></i>测试结果模态框
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 链接到实际页面 -->
+        <div class="card bg-base-100 shadow-xl mt-8">
+            <div class="card-body text-center">
+                <h2 class="card-title justify-center mb-4">
+                    <i class="fas fa-external-link-alt text-primary"></i>
+                    访问实际页面
+                </h2>
+                <p class="mb-4">点击下面的按钮访问完整的视频源管理页面</p>
+                <div class="flex justify-center gap-4">
+                    <a href="/sources_manage" class="btn btn-primary btn-lg">
+                        <i class="fas fa-cog mr-2"></i>视频源管理
+                    </a>
+                    <a href="/demo" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-play mr-2"></i>功能演示
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加源模态框演示 -->
+    <dialog id="demoModal" class="modal">
+        <div class="modal-box w-11/12 max-w-2xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">添加视频源</h3>
+            <form>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">源代码 *</span>
+                        </label>
+                        <input type="text" class="input input-bordered" required placeholder="例如: demo">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">源名称 *</span>
+                        </label>
+                        <input type="text" class="input input-bordered" required placeholder="例如: 演示资源">
+                    </div>
+                </div>
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">API URL *</span>
+                    </label>
+                    <input type="url" class="input input-bordered" required 
+                           placeholder="例如: https://demo.com/api.php/provide/vod">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="form-control">
+                        <label class="label cursor-pointer">
+                            <span class="label-text">启用</span>
+                            <input type="checkbox" class="toggle toggle-primary" checked>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label class="label cursor-pointer">
+                            <span class="label-text">设为默认</span>
+                            <input type="checkbox" class="toggle toggle-warning">
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-2"></i>保存
+                    </button>
+                    <button type="button" class="btn btn-ghost" onclick="closeDemoModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 上传模态框演示 -->
+    <dialog id="uploadDemoModal" class="modal">
+        <div class="modal-box w-11/12 max-w-lg">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">上传配置文件</h3>
+            <form>
+                <div class="form-control mb-6">
+                    <label class="label">
+                        <span class="label-text">选择 JSON 配置文件</span>
+                    </label>
+                    <input type="file" class="file-input file-input-bordered w-full" accept=".json" required>
+                    <label class="label">
+                        <span class="label-text-alt">支持标准的 sources.json 格式文件</span>
+                    </label>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload mr-2"></i>上传并更新
+                    </button>
+                    <button type="button" class="btn btn-ghost" onclick="closeUploadDemo()">取消</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 测试结果模态框演示 -->
+    <dialog id="testDemoModal" class="modal">
+        <div class="modal-box w-11/12 max-w-4xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">测试结果</h3>
+            <div>
+                <div class="card bg-base-200 mb-4">
+                    <div class="card-body">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="text-sm opacity-70">视频源</p>
+                                <p class="font-semibold">暴风资源 (bfzy)</p>
+                            </div>
+                            <div>
+                                <p class="text-sm opacity-70">测试时间</p>
+                                <p class="font-semibold">2025-01-20 12:34:56</p>
+                            </div>
+                            <div>
+                                <p class="text-sm opacity-70">状态</p>
+                                <p class="font-semibold text-success">
+                                    <i class="fas fa-check-circle mr-2"></i>成功 (245ms)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">返回数据</span>
+                    </label>
+                    <div class="bg-gray-800 rounded-lg p-4 max-h-96 overflow-y-auto">
+                        <pre class="text-gray-200 text-sm"><code>{
+  "success": true,
+  "count": 1250,
+  "data": [
+    {
+      "vod_id": "12345",
+      "vod_name": "示例电影",
+      "vod_pic": "https://example.com/pic.jpg",
+      "vod_remarks": "HD"
+    }
+  ]
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button class="btn btn-primary" onclick="closeTestDemo()">
+                    <i class="fas fa-times mr-2"></i>关闭
+                </button>
+                <button class="btn btn-info">
+                    <i class="fas fa-copy mr-2"></i>复制JSON
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        function showDemoModal() {
+            document.getElementById('demoModal').showModal();
+        }
+        
+        function closeDemoModal() {
+            document.getElementById('demoModal').close();
+        }
+        
+        function showUploadDemo() {
+            document.getElementById('uploadDemoModal').showModal();
+        }
+        
+        function closeUploadDemo() {
+            document.getElementById('uploadDemoModal').close();
+        }
+        
+        function showTestDemo() {
+            document.getElementById('testDemoModal').showModal();
+        }
+        
+        function closeTestDemo() {
+            document.getElementById('testDemoModal').close();
+        }
+        
+        // 点击模态框外部关闭
+        $(document).on('click', '.modal', function(e) {
+            if (e.target === this) {
+                this.close();
+            }
+        });
+    </script>
+</body>
+</html> 

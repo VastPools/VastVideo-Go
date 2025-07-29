@@ -1,0 +1,2823 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VastVideo-Go 管理控制台</title>
+    
+    <!-- Tailwind CSS + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .animate-bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        .content-area {
+            min-height: calc(100vh - 80px);
+        }
+        
+        .menu-item {
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* 视频源卡片样式优化 */
+        .source-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .source-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .source-card .card-body {
+            position: relative;
+        }
+        
+        /* 启用状态指示器 */
+        .source-card.enabled {
+            border-left: 4px solid #10b981;
+        }
+        
+        .source-card.disabled {
+            border-left: 4px solid #ef4444;
+        }
+        
+        /* 加载动画 */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+                @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        /* 视频源卡片样式优化 */
+        .source-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 150px;
+            max-height: 150px;
+        }
+        
+        .source-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .source-card .card-body {
+            position: relative;
+            padding: 0.75rem;
+        }
+        
+        /* 启用状态指示器 */
+        .source-card.enabled {
+            border-left: 4px solid #10b981;
+        }
+        
+        .source-card.disabled {
+            border-left: 4px solid #ef4444;
+        }
+        
+        /* 加载动画 */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .source-card .btn-circle {
+            width: 1.5rem;
+            height: 1.5rem;
+            min-height: 1.5rem;
+        }
+        
+        .source-card .toggle {
+            width: 2.5rem;
+            height: 1.25rem;
+            background-color: #f3f4f6 !important; /* 白色背景 */
+            border: 1px solid #d1d5db;
+        }
+        
+        /* 启用开关 - 开启状态 */
+        .source-card .toggle-success:checked {
+            background-color: #f3f4f6 !important; /* 保持白色背景 */
+            --tglbg: #16a34a !important; /* 拨块鲜艳绿色 */
+        }
+        
+        /* 启用开关 - 关闭状态 */
+        .source-card .toggle-success:not(:checked) {
+            background-color: #f3f4f6 !important; /* 保持白色背景 */
+            --tglbg: #52525b !important; /* 拨块深灰色 */
+        }
+        
+        /* 默认开关 - 开启状态 */
+        .source-card .toggle-warning:checked {
+            background-color: #f3f4f6 !important; /* 保持白色背景 */
+            --tglbg: #eab308 !important; /* 拨块鲜艳黄色 */
+        }
+        
+        /* 默认开关 - 关闭状态 */
+        .source-card .toggle-warning:not(:checked) {
+            background-color: #f3f4f6 !important; /* 保持白色背景 */
+            --tglbg: #52525b !important; /* 拨块深灰色 */
+        }
+        
+        /* 强制覆盖DaisyUI的拨块颜色 - 使用更高优先级的选择器 */
+        .source-card .toggle.toggle-success:checked::before {
+            background-color: #16a34a !important;
+        }
+        
+        .source-card .toggle.toggle-success:not(:checked)::before {
+            background-color: #52525b !important;
+        }
+        
+        .source-card .toggle.toggle-warning:checked::before {
+            background-color: #eab308 !important;
+        }
+        
+        .source-card .toggle.toggle-warning:not(:checked)::before {
+            background-color: #52525b !important;
+        }
+        
+        /* 强制覆盖DaisyUI的背景色 */
+        .source-card .toggle.toggle-success:checked {
+            background-color: #f3f4f6 !important;
+        }
+        
+        .source-card .toggle.toggle-success:not(:checked) {
+            background-color: #f3f4f6 !important;
+        }
+        
+        .source-card .toggle.toggle-warning:checked {
+            background-color: #f3f4f6 !important;
+        }
+        
+        .source-card .toggle.toggle-warning:not(:checked) {
+            background-color: #f3f4f6 !important;
+        }
+        
+        /* 开关悬停效果 */
+        .source-card .toggle:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 开关激活状态 - 添加拨块阴影 */
+        .source-card .toggle:checked {
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 拨块阴影效果 */
+        .source-card .toggle::before {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 启用开关拨块阴影 */
+        .source-card .toggle.toggle-success:checked::before {
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.3) !important;
+        }
+        
+        /* 默认开关拨块阴影 */
+        .source-card .toggle.toggle-warning:checked::before {
+            box-shadow: 0 2px 4px rgba(234, 179, 8, 0.3) !important;
+        }
+        
+        /* 使用内联样式级别的优先级 */
+        .source-card .toggle[class*="toggle-success"]:checked::before {
+            background-color: #16a34a !important;
+        }
+        
+        .source-card .toggle[class*="toggle-success"]:not(:checked)::before {
+            background-color: #52525b !important;
+        }
+        
+        .source-card .toggle[class*="toggle-warning"]:checked::before {
+            background-color: #eab308 !important;
+        }
+        
+        .source-card .toggle[class*="toggle-warning"]:not(:checked)::before {
+            background-color: #52525b !important;
+        }
+        
+        /* 自定义导航项样式 */
+        .nav-item {
+            display: flex !important;
+            align-items: center !important;
+            padding: 0.5rem 1rem !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            border-radius: 0.5rem !important;
+            transition: all 0.3s ease !important;
+            white-space: nowrap !important;
+            font-weight: 500 !important;
+            background-color: transparent !important;
+            border: 2px solid transparent !important;
+            cursor: pointer !important;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .nav-item i {
+            margin-right: 0.5rem !important;
+            font-size: 1rem !important;
+        }
+        
+        /* 自定义开关样式 - 完全自定义实现 */
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 2.5rem;
+            height: 1.25rem;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-switch::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: #52525b;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .custom-switch.enabled::before {
+            background-color: #16a34a;
+            transform: translateX(1.25rem);
+            box-shadow: 0 2px 4px rgba(22, 163, 74, 0.3);
+        }
+        
+        .custom-switch.default::before {
+            background-color: #eab308;
+            transform: translateX(1.25rem);
+            box-shadow: 0 2px 4px rgba(234, 179, 8, 0.3);
+        }
+        
+        .custom-switch:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* 视频网格布局 - 一行显示5个卡片，支持滚动显示所有结果 */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            height: 600px; /* 固定高度，确保滚动条显示 */
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #6c63ff #f3f4f6;
+            padding-right: 8px; /* 为滚动条预留空间 */
+        }
+
+        /* 列表视图样式 */
+        .video-grid.list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .video-grid.list-view .video-card {
+            display: flex;
+            flex-direction: row;
+            height: auto;
+            min-height: 80px;
+        }
+
+        .video-grid.list-view .video-cover {
+            width: 60px;
+            height: 80px;
+            flex-shrink: 0;
+            aspect-ratio: auto;
+        }
+
+        .video-grid.list-view .video-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 8px 12px;
+        }
+
+        .video-grid.list-view .video-title {
+            font-size: 14px;
+            margin-bottom: 4px;
+            -webkit-line-clamp: 1;
+            min-height: auto;
+        }
+
+        .video-grid.list-view .video-meta {
+            margin-top: 0;
+        }
+
+        /* 紧凑视图样式 */
+        .video-grid.compact-view {
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+        }
+
+        .video-grid.compact-view .video-card {
+            min-height: 120px;
+        }
+
+        .video-grid.compact-view .video-cover {
+            aspect-ratio: 2/3;
+        }
+
+        .video-grid.compact-view .video-info {
+            padding: 6px;
+        }
+
+        .video-grid.compact-view .video-title {
+            font-size: 11px;
+            margin-bottom: 4px;
+            -webkit-line-clamp: 1;
+            min-height: auto;
+        }
+
+        .video-grid.compact-view .video-meta {
+            gap: 2px;
+        }
+
+        .video-grid.compact-view .meta-badge {
+            font-size: 8px;
+            padding: 1px 3px;
+        }
+
+        /* 自定义滚动条样式 */
+        .video-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .video-grid::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 4px;
+        }
+
+        .video-grid::-webkit-scrollbar-thumb {
+            background: #6c63ff;
+            border-radius: 4px;
+        }
+
+        .video-grid::-webkit-scrollbar-thumb:hover {
+            background: #5a52d5;
+        }
+
+        /* 视频卡片样式 - 与index_mobile.html搜索结果完全一致 */
+        .video-card {
+            background: #23244a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .video-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(108,99,255,0.18);
+        }
+        
+        .video-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(108,99,255,0.1) 0%, rgba(108,99,255,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .video-card:hover::before {
+            opacity: 1;
+        }
+
+        .video-cover {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            background: #18192b;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        
+        .video-cover.loading {
+            opacity: 0.7;
+        }
+        
+        .video-cover.loaded {
+            opacity: 1;
+        }
+
+        .video-info {
+            padding: 12px;
+        }
+
+        .video-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .meta-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .meta-badge.type {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .meta-badge.rate {
+            background: #ffd93d;
+            color: #333;
+        }
+
+        .meta-badge.year {
+            background: #6bcf7f;
+            color: #fff;
+        }
+
+        .meta-badge.tag {
+            background: #23244a;
+            color: #b3b6d4;
+        }
+
+        /* 响应式调整 - 与index_mobile.html保持一致 */
+        @media (max-width: 480px) {
+            .video-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+            }
+
+            .video-grid.compact-view {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .video-info {
+                padding: 8px;
+            }
+
+            .video-title {
+                font-size: 13px;
+            }
+
+            .meta-badge {
+                font-size: 9px;
+                padding: 1px 4px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+            }
+
+            .video-grid.compact-view {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            
+            .video-title {
+                font-size: 12px;
+            }
+            
+            .video-info {
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .video-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+
+            .video-grid.compact-view {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        /* 测试结果标签页 */
+        .test-tabs {
+            display: flex;
+            border-bottom: 1px solid #374151;
+            margin-bottom: 16px;
+        }
+
+        .test-tab {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .test-tab.active {
+            color: #000 !important;
+            border-bottom-color: #6c63ff;
+            background-color: #f3f4f6;
+        }
+
+        .test-tab:hover {
+            color: #000 !important;
+            background-color: #e5e7eb;
+        }
+
+        .test-content {
+            display: none;
+            height: calc(90vh - 350px); /* 调整高度，为视频网格提供更多空间 */
+            min-height: 500px; /* 最小高度 */
+            max-height: 800px; /* 最大高度 */
+        }
+
+        .test-content.active {
+            display: block;
+        }
+
+        /* 分页按钮样式 */
+        #paginationContainer {
+            background: rgba(243, 244, 246, 0.9);
+            border: 2px solid #e5e7eb;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        #paginationContainer .btn {
+            min-width: 80px;
+            font-weight: 500;
+        }
+
+        #paginationContainer .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #pageIndicator {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* 类型标签样式 */
+        .type-tag {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: rgba(108, 99, 255, 0.1);
+            color: #6c63ff;
+        }
+
+        .type-tag:hover {
+            background: rgba(108, 99, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .type-tag.active {
+            background: #6c63ff;
+            color: #fff;
+            border-color: #6c63ff;
+        }
+
+        .type-tag.all-types {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .type-tag.all-types:hover {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .type-tag.all-types.active {
+            background: #22c55e;
+            color: #fff;
+            border-color: #22c55e;
+        }
+
+        /* 类型标签容器样式 */
+        #typeTagsContainer {
+            background: rgba(243, 244, 246, 0.8);
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        /* 类型选择器收缩弹层样式 */
+        .type-selector-collapsed {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            border-top: 1px solid transparent;
+        }
+
+        .type-selector-collapsed.expanded {
+            max-height: 200px;
+            border-top-color: #e5e7eb;
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+
+        /* 收缩状态下的当前选择显示 */
+        .type-selector-collapsed .current-selection {
+            background: rgba(108, 99, 255, 0.05);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+        }
+
+        .type-selector-collapsed .current-selection .selected-type {
+            color: #6c63ff;
+            font-weight: 500;
+        }
+
+        .type-selector-collapsed .current-selection .hint-text {
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        #typeTags {
+            max-height: 160px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #6c63ff #f3f4f6;
+        }
+
+        #typeTags::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #typeTags::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 3px;
+        }
+
+        #typeTags::-webkit-scrollbar-thumb {
+            background: #6c63ff;
+            border-radius: 3px;
+        }
+
+        #typeTags::-webkit-scrollbar-thumb:hover {
+            background: #5a52d5;
+        }
+
+        /* 切换按钮样式 */
+        #toggleTypeBtn {
+            transition: all 0.3s ease;
+        }
+
+        #toggleTypeBtn.expanded {
+            background: #6c63ff;
+            color: #fff;
+            border-color: #6c63ff;
+        }
+
+        #toggleTypeBtn.expanded:hover {
+            background: #5a52d5;
+            border-color: #5a52d5;
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- 顶部导航栏 -->
+    <nav class="navbar bg-base-100 shadow-lg glass-effect">
+        <!-- 移动端汉堡菜单 -->
+        <div class="navbar-start lg:hidden">
+            <div class="dropdown">
+                <div tabindex="0" role="button" class="btn btn-ghost">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a class="menu-item" data-page="home">
+                        <i class="fas fa-home mr-2"></i>VastVideo-Go
+                    </a></li>
+                    <li><a class="menu-item" data-page="sources">
+                        <i class="fas fa-database mr-2"></i>源管理
+                    </a></li>
+                    <li><a class="menu-item" data-page="types">
+                        <i class="fas fa-tags mr-2"></i>类型管理
+                    </a></li>
+                    <li><a class="menu-item" data-page="test">
+                        <i class="fas fa-play mr-2"></i>测试播放
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 桌面端Logo -->
+        <div class="navbar-start hidden lg:flex">
+            <a class="btn btn-ghost text-xl font-bold">
+                <i class="fas fa-film mr-2"></i>VastVideo-Go
+            </a>
+        </div>
+        
+        <!-- 居中的导航菜单 -->
+        <div class="navbar-center flex-1 flex justify-center">
+            <div class="flex flex-row items-center gap-4">
+                <a class="nav-item active" data-page="home">
+                    <i class="fas fa-home mr-2"></i>VastVideo-Go
+                </a>
+                <a class="nav-item" data-page="sources">
+                    <i class="fas fa-database mr-2"></i>源管理
+                </a>
+                <a class="nav-item" data-page="types">
+                    <i class="fas fa-tags mr-2"></i>类型管理
+                </a>
+                <a class="nav-item" data-page="test">
+                    <i class="fas fa-play mr-2"></i>测试播放
+                </a>
+            </div>
+        </div>
+        
+        <!-- 右侧占位区域，保持菜单居中 -->
+        <div class="navbar-end hidden lg:flex">
+            <div class="w-32"></div>
+        </div>
+    </nav>
+
+    <!-- 内容区域 -->
+    <div class="content-area p-6">
+        <!-- 加载状态 -->
+        <div id="loadingState" class="flex justify-center items-center h-64">
+            <div class="text-center">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <p class="text-white text-lg">正在加载...</p>
+            </div>
+        </div>
+
+        <!-- 首页内容 -->
+        <div id="homeContent" class="hidden">
+            <!-- 欢迎横幅 -->
+            <div class="hero min-h-96 mb-8 animate-fade-in">
+                <div class="hero-content text-center text-white">
+                    <div class="max-w-4xl">
+                        <h1 class="text-5xl font-bold mb-8 animate-bounce-in">
+                            <i class="fas fa-film mr-4"></i>欢迎使用 VastVideo-Go
+                        </h1>
+                        <p class="py-6 text-xl opacity-90 animate-slide-up">
+                            强大的视频源管理和播放平台，为您提供流畅的视频体验
+                        </p>
+                        <div class="flex justify-center gap-4 mt-8">
+                            <button class="btn btn-primary btn-lg" onclick="loadPage('sources')">
+                                <i class="fas fa-database mr-2"></i>开始管理
+                            </button>
+                            <button class="btn btn-outline btn-lg text-white border-white hover:bg-white hover:text-gray-800">
+                                <i class="fas fa-play mr-2"></i>快速播放
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stats-card rounded-lg p-6 text-white animate-slide-up">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold" id="sourceCount">16</h3>
+                            <p class="opacity-80">视频源</p>
+                        </div>
+                        <div class="text-3xl opacity-60">
+                            <i class="fas fa-database"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card rounded-lg p-6 text-white animate-slide-up">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold" id="typeCount">7</h3>
+                            <p class="opacity-80">类型映射</p>
+                        </div>
+                        <div class="text-3xl opacity-60">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card rounded-lg p-6 text-white animate-slide-up">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold" id="activeCount">12</h3>
+                            <p class="opacity-80">活跃源</p>
+                        </div>
+                        <div class="text-3xl opacity-60">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card rounded-lg p-6 text-white animate-slide-up">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold" id="uptime">99.9%</h3>
+                            <p class="opacity-80">运行状态</p>
+                        </div>
+                        <div class="text-3xl opacity-60">
+                            <i class="fas fa-server"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 功能特性 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="card bg-base-100 shadow-xl feature-card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <div class="text-4xl text-primary mb-4">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h2 class="card-title justify-center">视频源管理</h2>
+                            <p class="text-gray-600">轻松管理多个视频源，支持添加、编辑、删除和测试功能</p>
+                            <div class="card-actions justify-center mt-4">
+                                <button class="btn btn-primary" onclick="loadPage('sources')">
+                                    <i class="fas fa-arrow-right mr-2"></i>进入管理
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow-xl feature-card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <div class="text-4xl text-secondary mb-4">
+                                <i class="fas fa-tags"></i>
+                            </div>
+                            <h2 class="card-title justify-center">类型映射</h2>
+                            <p class="text-gray-600">智能类型映射系统，自动分类和整理视频内容</p>
+                            <div class="card-actions justify-center mt-4">
+                                <button class="btn btn-secondary" onclick="loadPage('types')">
+                                    <i class="fas fa-arrow-right mr-2"></i>进入管理
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow-xl feature-card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <div class="text-4xl text-accent mb-4">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <h2 class="card-title justify-center">测试播放</h2>
+                            <p class="text-gray-600">实时测试视频源和播放功能，确保系统稳定运行</p>
+                            <div class="card-actions justify-center mt-4">
+                                <button class="btn btn-accent" onclick="loadPage('test')">
+                                    <i class="fas fa-arrow-right mr-2"></i>开始测试
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速操作 -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title mb-6">
+                        <i class="fas fa-bolt mr-2"></i>快速操作
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <button class="btn btn-outline btn-lg" onclick="loadPage('sources')">
+                            <i class="fas fa-plus mr-2"></i>添加视频源
+                        </button>
+                        <button class="btn btn-outline btn-lg" onclick="loadPage('types')">
+                            <i class="fas fa-tag mr-2"></i>配置类型
+                        </button>
+                        <button class="btn btn-outline btn-lg" onclick="loadPage('test')">
+                            <i class="fas fa-vial mr-2"></i>测试连接
+                        </button>
+                        <button class="btn btn-outline btn-lg" onclick="refreshStats()">
+                            <i class="fas fa-sync-alt mr-2"></i>刷新状态
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 源管理内容 -->
+        <div id="sourcesContent" class="hidden">
+            <!-- 页面标题 -->
+            <div class="mb-6 animate-fade-in">
+                <h1 class="text-3xl font-bold text-white mb-2">
+                    <i class="fas fa-database mr-3"></i>视频源管理
+                </h1>
+                <p class="text-white opacity-80">管理您的视频源配置，支持增删改查和批量操作</p>
+            </div>
+
+            <!-- 工具栏 -->
+            <div class="card bg-base-100 shadow-xl mb-4 animate-slide-up">
+                <div class="card-body p-4">
+                    <div class="flex flex-wrap gap-3 items-center justify-between">
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn btn-primary btn-sm" onclick="showAddSourceModal()">
+                                <i class="fas fa-plus mr-1"></i>添加
+                            </button>
+                            <button class="btn btn-success btn-sm" onclick="showUploadModal()">
+                                <i class="fas fa-upload mr-1"></i>上传
+                            </button>
+                            <button class="btn btn-info btn-sm" onclick="showRemoteUpdateModal()">
+                                <i class="fas fa-globe mr-1"></i>远程
+                            </button>
+                            <button class="btn btn-warning btn-sm" onclick="refreshSourcesList()">
+                                <i class="fas fa-sync-alt mr-1"></i>刷新
+                            </button>
+                        </div>
+                        <div class="form-control">
+                            <div class="input-group">
+                                <input type="text" id="sourceSearchInput" placeholder="搜索..." 
+                                       class="input input-bordered input-sm" onkeyup="filterSources()">
+                                <button class="btn btn-square btn-sm">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 加载状态 -->
+            <div id="sourcesLoading" class="flex justify-center items-center h-64">
+                <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-white text-lg">正在加载视频源...</p>
+                </div>
+            </div>
+
+            <!-- 视频源卡片网格 -->
+            <div id="sourcesGrid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3 hidden">
+                <!-- 动态生成的卡片 -->
+            </div>
+
+            <!-- 空状态 -->
+            <div id="sourcesEmpty" class="text-center py-12 hidden">
+                <div class="text-6xl text-white mb-4 opacity-50">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">暂无视频源</h3>
+                <p class="text-white opacity-80 mb-8">点击"添加源"按钮开始添加您的第一个视频源</p>
+                <button class="btn btn-primary btn-lg" onclick="showAddSourceModal()">
+                    <i class="fas fa-plus mr-2"></i>添加第一个源
+                </button>
+            </div>
+        </div>
+
+        <!-- 类型管理内容 -->
+        <div id="typesContent" class="hidden">
+            <div class="text-center py-12">
+                <div class="text-6xl text-white mb-4">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white mb-4">类型管理</h2>
+                <p class="text-white opacity-80 mb-8">此功能正在开发中，即将上线...</p>
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary" onclick="window.open('/type_mapping', '_blank')">
+                        <i class="fas fa-external-link-alt mr-2"></i>访问现有页面
+                    </button>
+                    <button class="btn btn-outline text-white border-white hover:bg-white hover:text-gray-800" onclick="loadPage('home')">
+                        <i class="fas fa-arrow-left mr-2"></i>返回首页
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试播放内容 -->
+        <div id="testContent" class="hidden">
+            <div class="text-center py-12">
+                <div class="text-6xl text-white mb-4">
+                    <i class="fas fa-play"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white mb-4">测试播放</h2>
+                <p class="text-white opacity-80 mb-8">此功能正在开发中，即将上线...</p>
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary" onclick="window.open('/mobile', '_blank')">
+                        <i class="fas fa-external-link-alt mr-2"></i>访问播放页面
+                    </button>
+                    <button class="btn btn-outline text-white border-white hover:bg-white hover:text-gray-800" onclick="loadPage('home')">
+                        <i class="fas fa-arrow-left mr-2"></i>返回首页
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知容器 -->
+    <div class="toast-container fixed top-4 right-4 z-50"></div>
+
+    <!-- 添加/编辑源模态框 -->
+    <dialog id="addSourceModal" class="modal">
+        <div class="modal-box w-11/12 max-w-2xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 id="sourceModalTitle" class="font-bold text-lg mb-4">添加视频源</h3>
+            <form id="sourceForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">源代码 *</span>
+                        </label>
+                        <input type="text" id="sourceCode" class="input input-bordered" required placeholder="例如: bfzy">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">源名称 *</span>
+                        </label>
+                        <input type="text" id="sourceName" class="input input-bordered" required placeholder="例如: 暴风资源">
+                    </div>
+                </div>
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">API URL *</span>
+                    </label>
+                    <input type="url" id="sourceUrl" class="input input-bordered" required 
+                           placeholder="例如: https://bfzyapi.com/api.php/provide/vod">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="form-control">
+                        <label class="label cursor-pointer">
+                            <span class="label-text">启用</span>
+                            <input type="checkbox" id="sourceEnabled" class="toggle toggle-primary" checked>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label class="label cursor-pointer">
+                            <span class="label-text">设为默认</span>
+                            <input type="checkbox" id="sourceDefault" class="toggle toggle-warning">
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-2"></i>保存
+                    </button>
+                    <button type="button" class="btn btn-ghost" onclick="closeSourceModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 文件上传模态框 -->
+    <dialog id="uploadModal" class="modal">
+        <div class="modal-box w-11/12 max-w-lg">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">上传配置文件</h3>
+            <form id="uploadForm">
+                <div class="form-control mb-6">
+                    <label class="label">
+                        <span class="label-text">选择 JSON 配置文件</span>
+                    </label>
+                    <input type="file" id="configFile" class="file-input file-input-bordered w-full" accept=".json" required>
+                    <label class="label">
+                        <span class="label-text-alt">支持标准的 sources.json 格式文件</span>
+                    </label>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload mr-2"></i>上传并更新
+                    </button>
+                    <button type="button" class="btn btn-ghost" onclick="closeUploadModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 远程更新模态框 -->
+    <dialog id="remoteUpdateModal" class="modal">
+        <div class="modal-box w-11/12 max-w-lg">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">远程更新配置</h3>
+            <form id="remoteUpdateForm">
+                <div class="form-control mb-6">
+                    <label class="label">
+                        <span class="label-text">远程配置文件URL</span>
+                    </label>
+                    <div class="input-group">
+                        <input type="url" id="remoteUrl" class="input input-bordered flex-1" 
+                               required placeholder="例如: https://example.com/sources.json">
+                        <button type="button" class="btn btn-info" onclick="testRemoteUrl()">
+                            <i class="fas fa-vial mr-2"></i>测试
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-download mr-2"></i>更新配置
+                    </button>
+                    <button type="button" class="btn btn-ghost" onclick="closeRemoteUpdateModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 测试结果模态框 -->
+    <dialog id="testResultModal" class="modal">
+        <div class="modal-box w-11/12 max-w-6xl h-[90vh] overflow-hidden">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">测试结果</h3>
+            
+            <!-- 测试信息卡片 -->
+            <div class="card bg-base-200 mb-4">
+                <div class="card-body">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <p class="text-sm opacity-70">视频源</p>
+                            <p class="font-semibold" id="testSourceName"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm opacity-70">测试时间</p>
+                            <p class="font-semibold" id="testTime"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm opacity-70">状态</p>
+                            <p class="font-semibold" id="testStatus"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 类型标签区域 -->
+            <div class="mb-4" id="typeTagsContainer" style="display: none;">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-lg font-semibold">类型筛选</h4>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm opacity-70" id="typeCount">0 个类型</span>
+                        <button class="btn btn-sm btn-outline" onclick="toggleTypeSelector()" id="toggleTypeBtn">
+                            <i class="fas fa-chevron-down mr-1"></i>展开
+                        </button>
+                    </div>
+                </div>
+                <div class="type-selector-collapsed" id="typeSelector">
+                    <div class="flex flex-wrap gap-2" id="typeTags">
+                        <!-- 类型标签将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 标签页 -->
+            <div class="test-tabs">
+                <button class="test-tab active" onclick="switchTestTab('videos')">
+                    <i class="fas fa-film mr-2"></i>视频列表
+                </button>
+                <button class="test-tab" onclick="switchTestTab('json')">
+                    <i class="fas fa-code mr-2"></i>JSON数据
+                </button>
+            </div>
+
+            <!-- 视频列表内容 -->
+            <div id="videosContent" class="test-content active">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-lg font-semibold">视频列表</h4>
+                    <div class="flex items-center gap-4">
+                        <!-- 视频展示样式切换按钮 -->
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm opacity-70">展示样式:</span>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline btn-sm active" onclick="switchViewMode('grid')" id="gridViewBtn" title="网格视图">
+                                    <i class="fas fa-th"></i>
+                                </button>
+                                <button class="btn btn-outline btn-sm" onclick="switchViewMode('list')" id="listViewBtn" title="列表视图">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button class="btn btn-outline btn-sm" onclick="switchViewMode('compact')" id="compactViewBtn" title="紧凑视图">
+                                    <i class="fas fa-th-large"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <span class="text-sm opacity-70" id="videoCount">0 个视频</span>
+                        <span class="text-sm opacity-70" id="pageInfo">第 1 页</span>
+                    </div>
+                </div>
+                <div id="videoGrid" class="video-grid">
+                    <!-- 视频卡片将在这里动态生成 -->
+                </div>
+                <!-- 分页按钮 -->
+                <div class="flex justify-center items-center gap-4 mt-4 p-4 bg-base-200 rounded-lg" id="paginationContainer" style="display: none;">
+                    <button class="btn btn-outline btn-sm" onclick="goToPreviousPage()" id="prevPageBtn">
+                        <i class="fas fa-chevron-left mr-1"></i>上一页
+                    </button>
+                    <span class="text-sm font-medium" id="pageIndicator">第 1 页，共 1 页</span>
+                    <button class="btn btn-outline btn-sm" onclick="goToNextPage()" id="nextPageBtn">
+                        下一页<i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- JSON数据内容 -->
+            <div id="jsonContent" class="test-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-lg font-semibold">返回数据</h4>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm opacity-70" id="jsonCount">0 条数据</span>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 overflow-y-auto" style="height: calc(100% - 60px);">
+                    <pre class="text-gray-200 text-sm" id="testResultJson"></pre>
+                </div>
+            </div>
+
+
+        </div>
+    </dialog>
+
+    <script>
+        let currentPage = 'home';
+        let statsData = {};
+        let sourcesList = [];
+        let editingSource = null;
+        let currentTypeId = 'all'; // 当前选择的类型ID
+        let currentViewMode = 'grid'; // 当前视图模式：grid, list, compact
+
+        // 页面加载完成后初始化
+        $(document).ready(function() {
+            // 隐藏加载状态，显示首页
+            setTimeout(() => {
+                $('#loadingState').addClass('hidden');
+                loadPage('home');
+            }, 1000);
+
+            // 绑定菜单点击事件
+            $('.nav-item, .menu-item').on('click', function(e) {
+                e.preventDefault();
+                const page = $(this).data('page');
+                loadPage(page);
+            });
+            
+
+        });
+        
+
+
+        // 加载页面内容
+        function loadPage(page) {
+            // 更新当前页面
+            currentPage = page;
+            
+            // 更新菜单状态
+            $('.nav-item, .menu-item').removeClass('active');
+            $(`.nav-item[data-page="${page}"], .menu-item[data-page="${page}"]`).addClass('active');
+            
+            // 隐藏所有内容
+            $('[id$="Content"]').addClass('hidden');
+            
+            // 显示对应内容
+            $(`#${page}Content`).removeClass('hidden');
+            
+            // 如果是首页，刷新统计数据
+            if (page === 'home') {
+                refreshStats();
+            }
+            
+            // 如果是源管理页面，加载视频源列表
+            if (page === 'sources') {
+                loadSourcesList();
+            }
+            
+            // 显示页面切换提示
+            showToast(`已切换到${getPageTitle(page)}`, 'info');
+        }
+
+        // 获取页面标题
+        function getPageTitle(page) {
+            const titles = {
+                'home': 'VastVideo-Go',
+                'sources': '源管理',
+                'types': '类型管理',
+                'test': '测试播放'
+            };
+            return titles[page] || '未知页面';
+        }
+
+        // 刷新统计数据
+        async function refreshStats() {
+            try {
+                // 获取视频源统计
+                const sourcesResponse = await fetch('/api/sources');
+                const sourcesData = await sourcesResponse.json();
+                
+                if (sourcesData.success) {
+                    const sources = sourcesData.data;
+                    const activeSources = sources.filter(s => s.enabled).length;
+                    
+                    $('#sourceCount').text(sources.length);
+                    $('#activeCount').text(activeSources);
+                }
+
+                // 获取类型映射统计
+                const typesResponse = await fetch('/api/type_mapping');
+                const typesData = await typesResponse.json();
+                
+                if (typesData.success) {
+                    $('#typeCount').text(typesData.count || 0);
+                }
+
+                // 模拟运行状态
+                $('#uptime').text('99.9%');
+                
+                showToast('统计数据已更新', 'success');
+            } catch (error) {
+                console.error('获取统计数据失败:', error);
+                showToast('获取统计数据失败', 'error');
+            }
+        }
+
+        // 显示Toast通知
+        function showToast(message, type = 'info') {
+            const toastId = 'toast-' + Date.now();
+            const iconMap = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            const alertClass = {
+                success: 'alert-success',
+                error: 'alert-error',
+                warning: 'alert-warning',
+                info: 'alert-info'
+            };
+            
+            const toast = $(`
+                <div id="${toastId}" class="alert ${alertClass[type]} shadow-lg transform translate-x-full transition-transform duration-300">
+                    <i class="${iconMap[type]}"></i>
+                    <span>${message}</span>
+                </div>
+            `);
+            
+            $('.toast-container').append(toast);
+            
+            setTimeout(() => {
+                toast.removeClass('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.addClass('translate-x-full');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // 键盘快捷键
+        $(document).on('keydown', function(e) {
+            // Ctrl/Cmd + 数字键切换页面
+            if ((e.ctrlKey || e.metaKey) && e.key >= '1' && e.key <= '4') {
+                e.preventDefault();
+                const pages = ['home', 'sources', 'types', 'test'];
+                const pageIndex = parseInt(e.key) - 1;
+                if (pages[pageIndex]) {
+                    loadPage(pages[pageIndex]);
+                }
+            }
+            
+            // ESC键返回首页
+            if (e.key === 'Escape' && currentPage !== 'home') {
+                loadPage('home');
+            }
+        });
+
+        // 定期刷新统计数据（每5分钟）
+        setInterval(() => {
+            if (currentPage === 'home') {
+                refreshStats();
+            }
+        }, 5 * 60 * 1000);
+
+        // ==================== 源管理功能 ====================
+
+        // 加载视频源列表
+        async function loadSourcesList() {
+            showSourcesLoading(true);
+            try {
+                const response = await fetch('/api/sources');
+                const data = await response.json();
+                
+                if (data.success) {
+                    sourcesList = data.data;
+                    renderSourcesCards();
+                    showToast('视频源列表已加载', 'success');
+                } else {
+                    showToast('获取视频源列表失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            } finally {
+                showSourcesLoading(false);
+            }
+        }
+
+        // 渲染视频源卡片
+        function renderSourcesCards() {
+            const grid = $('#sourcesGrid');
+            grid.empty();
+
+            if (sourcesList.length === 0) {
+                $('#sourcesEmpty').removeClass('hidden');
+                $('#sourcesGrid').addClass('hidden');
+                return;
+            }
+
+            $('#sourcesEmpty').addClass('hidden');
+            $('#sourcesGrid').removeClass('hidden');
+
+            // 保持原始顺序，不进行动态排序
+            const sortedSources = [...sourcesList];
+
+            sortedSources.forEach(source => {
+                const card = createSourceCard(source);
+                grid.append(card);
+            });
+            
+
+        }
+
+        // 创建视频源卡片
+        function createSourceCard(source) {
+            // 根据状态生成上下渐变色背景
+            let bgGradient = '';
+            
+            if (!source.enabled) {
+                // 禁用状态 - 上部红色，下部灰色
+                bgGradient = 'bg-gradient-to-b from-red-100 to-gray-200';
+            } else if (source.is_default) {
+                // 默认源 - 上部绿色，下部橙色
+                bgGradient = 'bg-gradient-to-b from-green-100 to-orange-200';
+            } else {
+                // 普通启用状态 - 上部绿色，下部黄色
+                bgGradient = 'bg-gradient-to-b from-green-100 to-yellow-200';
+            }
+            
+            const isEnabled = source.enabled ? 'opacity-100 enabled' : 'opacity-60 disabled';
+            
+            return $(`
+                <div class="card source-card ${bgGradient} shadow-lg hover:shadow-xl transition-all duration-300 ${isEnabled} border-0" data-source-code="${source.code}">
+                    <div class="card-body p-3">
+                        <!-- 第一行：标题和源代码 -->
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-gray-800 text-sm mb-1 truncate">
+                                    ${source.name}
+                                </h3>
+                                <p class="text-xs text-gray-500 font-mono">
+                                    ${source.code}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- 第二行：启用开关和操作按钮 -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col gap-1.5">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-semibold text-gray-700 whitespace-nowrap">启用</span>
+                                    <label class="custom-switch ${source.enabled ? 'enabled' : ''}" onclick="toggleSourceStatus('${source.code}', !${source.enabled})">
+                                        <input type="checkbox" ${source.enabled ? 'checked' : ''} style="display: none;">
+                                    </label>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-semibold text-gray-700 whitespace-nowrap">默认</span>
+                                    <label class="custom-switch ${source.is_default ? 'default' : ''}" onclick="toggleSourceDefault('${source.code}', !${source.is_default})">
+                                        <input type="checkbox" ${source.is_default ? 'checked' : ''} style="display: none;">
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-1">
+                                <button class="btn btn-circle btn-xs btn-info" onclick="testSource('${source.code}')" title="测试">
+                                    <i class="fas fa-vial text-xs"></i>
+                                </button>
+                                <button class="btn btn-circle btn-xs btn-warning" onclick="editSource('${source.code}')" title="编辑">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </button>
+                                <button class="btn btn-circle btn-xs btn-error" onclick="deleteSource('${source.code}')" title="删除">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+
+        // 显示/隐藏加载状态
+        function showSourcesLoading(show) {
+            if (show) {
+                $('#sourcesLoading').removeClass('hidden');
+                $('#sourcesGrid').addClass('hidden');
+                $('#sourcesEmpty').addClass('hidden');
+            } else {
+                $('#sourcesLoading').addClass('hidden');
+            }
+        }
+
+        // 过滤视频源
+        function filterSources() {
+            const searchTerm = $('#sourceSearchInput').val().toLowerCase();
+            const cards = $('#sourcesGrid .card');
+            
+            cards.each(function() {
+                const card = $(this);
+                const text = card.text().toLowerCase();
+                card.toggle(text.includes(searchTerm));
+            });
+        }
+
+        // 刷新视频源列表
+        function refreshSourcesList() {
+            loadSourcesList();
+        }
+
+        // 显示添加源模态框
+        function showAddSourceModal() {
+            editingSource = null;
+            $('#sourceModalTitle').text('添加视频源');
+            $('#sourceForm')[0].reset();
+            $('#sourceCode').prop('disabled', false);
+            $('#addSourceModal')[0].showModal();
+        }
+
+        // 编辑视频源
+        function editSource(code) {
+            const source = sourcesList.find(s => s.code === code);
+            if (!source) {
+                showToast('未找到指定的视频源', 'error');
+                return;
+            }
+
+            editingSource = source;
+            $('#sourceModalTitle').text('编辑视频源');
+            $('#sourceCode').val(source.code).prop('disabled', true);
+            $('#sourceName').val(source.name);
+            $('#sourceUrl').val(source.url);
+            $('#sourceEnabled').prop('checked', source.enabled);
+            $('#sourceDefault').prop('checked', source.is_default);
+            
+            $('#addSourceModal')[0].showModal();
+        }
+
+        // 删除视频源
+        async function deleteSource(code) {
+            const source = sourcesList.find(s => s.code === code);
+            if (!source) {
+                showToast('未找到指定的视频源', 'error');
+                return;
+            }
+
+            if (!confirm(`确定要删除视频源 "${source.name}" (${source.code}) 吗？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/sources_manage/${code}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('视频源删除成功', 'success');
+                    loadSourcesList();
+                } else {
+                    showToast('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 测试视频源
+        async function testSource(code) {
+            const source = sourcesList.find(s => s.code === code);
+            if (!source) {
+                showToast('未找到指定的视频源', 'error');
+                return;
+            }
+
+            showToast(`正在测试 ${source.name}...`, 'info');
+            
+            // 重置搜索关键词（使用最新推荐）
+            currentKeyword = '';
+            
+            const startTime = performance.now();
+            let testResult = {
+                success: false,
+                data: null,
+                error: null,
+                responseTime: 0,
+                sourceInfo: source
+            };
+            
+            try {
+                const response = await fetch(`/api/source_search?source=${code}&latest=true&page=1`);
+                const data = await response.json();
+                const endTime = performance.now();
+                
+                testResult = {
+                    success: data.success,
+                    data: data,
+                    error: data.success ? null : data.message,
+                    responseTime: Math.round(endTime - startTime),
+                    sourceInfo: source,
+                    timestamp: new Date()
+                };
+                
+                if (data.success) {
+                    showToast(`${source.name} 测试成功，获取到 ${data.count} 条数据 (${testResult.responseTime}ms)`, 'success');
+                } else {
+                    showToast(`${source.name} 测试失败: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                const endTime = performance.now();
+                testResult = {
+                    success: false,
+                    data: null,
+                    error: error.message,
+                    responseTime: Math.round(endTime - startTime),
+                    sourceInfo: source,
+                    timestamp: new Date()
+                };
+                showToast(`${source.name} 测试失败: ${error.message}`, 'error');
+            }
+            
+            showTestResult(testResult);
+        }
+
+        // 显示测试结果
+        function showTestResult(testResult) {
+            const { success, data, error, responseTime, sourceInfo, timestamp } = testResult;
+            
+            $('#testSourceName').text(`${sourceInfo.name} (${sourceInfo.code})`);
+            $('#testTime').text(timestamp.toLocaleString());
+            
+            const statusElement = $('#testStatus');
+            if (success) {
+                statusElement.html('<i class="fas fa-check-circle text-success mr-2"></i>成功');
+                statusElement.removeClass('text-error').addClass('text-success');
+            } else {
+                statusElement.html('<i class="fas fa-times-circle text-error mr-2"></i>失败');
+                statusElement.removeClass('text-success').addClass('text-error');
+            }
+            
+            if (responseTime > 0) {
+                statusElement.append(` (${responseTime}ms)`);
+            }
+            
+            // 处理JSON数据
+            const jsonElement = $('#testResultJson');
+            if (success && data) {
+                const jsonString = JSON.stringify(data, null, 2);
+                jsonElement.text(jsonString);
+                
+                // 更新JSON数据计数
+                const jsonLines = jsonString.split('\n').length;
+                $('#jsonCount').text(`${jsonLines} 行数据`);
+                
+                // 渲染视频卡片
+                renderVideoCards(data, sourceInfo);
+                
+                // 加载类型列表
+                loadSourceTypes(sourceInfo.code);
+            } else if (error) {
+                const errorJson = JSON.stringify({
+                    error: error,
+                    responseTime: responseTime,
+                    timestamp: timestamp.toISOString()
+                }, null, 2);
+                jsonElement.text(errorJson);
+                
+                // 更新JSON数据计数
+                const jsonLines = errorJson.split('\n').length;
+                $('#jsonCount').text(`${jsonLines} 行数据`);
+                
+                // 清空视频网格
+                $('#videoGrid').empty();
+                $('#videoCount').text('0 个视频');
+            } else {
+                jsonElement.text('无数据');
+                $('#jsonCount').text('0 行数据');
+                $('#videoGrid').empty();
+                $('#videoCount').text('0 个视频');
+            }
+            
+            $('#testResultModal')[0].showModal();
+        }
+
+        // 复制测试结果JSON
+        async function copyTestResult() {
+            const jsonText = $('#testResultJson').text();
+            
+            try {
+                await navigator.clipboard.writeText(jsonText);
+                showToast('JSON数据已复制到剪贴板', 'success');
+            } catch (error) {
+                const textArea = $('<textarea>').val(jsonText).appendTo('body');
+                textArea.select();
+                document.execCommand('copy');
+                textArea.remove();
+                showToast('JSON数据已复制到剪贴板', 'success');
+            }
+        }
+
+        // 关闭模态框
+        function closeSourceModal() {
+            $('#addSourceModal')[0].close();
+        }
+
+        function closeUploadModal() {
+            $('#uploadModal')[0].close();
+        }
+
+        function closeRemoteUpdateModal() {
+            $('#remoteUpdateModal')[0].close();
+        }
+
+
+
+        // 切换测试结果标签页
+        function switchTestTab(tabName) {
+            // 更新标签页状态
+            $('.test-tab').removeClass('active');
+            $(`.test-tab[onclick*="${tabName}"]`).addClass('active');
+            
+            // 更新内容显示
+            $('.test-content').removeClass('active');
+            $(`#${tabName}Content`).addClass('active');
+        }
+
+        // 全局变量用于分页
+        let currentVideoData = [];
+        let currentSourceInfo = null;
+        let videoCurrentPage = 1;
+        let videosPerPage = 20;
+        let videoIsLoading = false;
+        let totalCount = 0;
+        let totalPages = 0;
+        let currentKeyword = '';
+
+        // 渲染视频卡片
+        function renderVideoCards(data, sourceInfo) {
+            // 保存数据到全局变量
+            currentVideoData = [];
+            currentSourceInfo = sourceInfo;
+            videoCurrentPage = 1;
+            
+            // 提取视频数据
+            let videos = [];
+            let extractedTotalCount = 0;
+            let extractedTotalPages = 0;
+            let extractedCurrentPage = 1;
+            
+            // 检查是否是新的API响应格式（包含raw_data）
+            if (data.raw_data && data.raw_data.list && Array.isArray(data.raw_data.list)) {
+                // 新的API响应格式
+                videos = data.raw_data.list;
+                extractedTotalCount = data.raw_data.total || videos.length;
+                extractedTotalPages = data.raw_data.pagecount || Math.ceil(videos.length / videosPerPage);
+                extractedCurrentPage = data.raw_data.page || 1;
+                
+                console.log('📊 原始API数据:', {
+                    total: extractedTotalCount,
+                    pagecount: extractedTotalPages,
+                    page: extractedCurrentPage,
+                    videoCount: videos.length
+                });
+            } else {
+                // 兼容旧的数据格式
+                if (data.list && Array.isArray(data.list)) {
+                    videos = data.list;
+                } else if (data.data && Array.isArray(data.data)) {
+                    videos = data.data;
+                } else if (data.videos && Array.isArray(data.videos)) {
+                    videos = data.videos;
+                } else if (Array.isArray(data)) {
+                    videos = data;
+                } else if (data.results && Array.isArray(data.results)) {
+                    videos = data.results;
+                }
+                
+                extractedTotalCount = videos.length;
+                extractedTotalPages = Math.ceil(videos.length / videosPerPage);
+                extractedCurrentPage = 1;
+            }
+            
+            console.log('提取到的视频数据:', videos);
+            console.log('分页信息:', { extractedTotalCount, extractedTotalPages, extractedCurrentPage });
+            
+            // 保存全局分页信息
+            currentVideoData = videos;
+            totalCount = parseInt(extractedTotalCount, 10) || 0;
+            totalPages = parseInt(extractedTotalPages, 10) || 1;
+            videoCurrentPage = parseInt(extractedCurrentPage, 10) || 1;
+            
+            console.log('📊 分页信息已更新:', {
+                totalCount,
+                totalPages,
+                videoCurrentPage,
+                videoCount: videos.length
+            });
+            
+            // 更新视频数量显示
+            $('#videoCount').text(`${totalCount} 个视频`);
+            
+            if (videos.length === 0) {
+                $('#videoGrid').html('<div class="col-span-full text-center py-8" style="height: 600px; display: flex; align-items: center; justify-content: center;"><div class="text-center"><p class="text-gray-500">暂无视频数据</p></div></div>');
+                $('#paginationContainer').hide();
+                return;
+            }
+            
+            // 渲染当前页视频
+            renderCurrentPage();
+            
+            // 重新设置滚动监听
+            setupScrollAutoLoad();
+        }
+
+        // 渲染当前页视频
+        function renderCurrentPage() {
+            const videoGrid = $('#videoGrid');
+            
+            // 清空网格但保持容器大小
+            videoGrid.empty();
+            
+            // 如果没有数据，显示空状态
+            if (!currentVideoData || currentVideoData.length === 0) {
+                videoGrid.html('<div class="col-span-full text-center py-8"><div class="text-center"><p class="text-gray-500">暂无视频数据</p></div></div>');
+                return;
+            }
+            
+            // 渲染所有当前视频卡片（API已经返回当前页的数据）
+            currentVideoData.forEach(video => {
+                const card = createVideoCard(video, currentSourceInfo);
+                videoGrid.append(card);
+            });
+            
+            // 更新页面信息
+            $('#pageInfo').text(`第 ${videoCurrentPage} 页`);
+            $('#pageIndicator').text(`第 ${videoCurrentPage} 页，共 ${totalPages} 页`);
+            
+            // 更新翻页按钮状态
+            updatePaginationButtons(totalPages);
+            
+            // 检查是否显示分页按钮
+            if (totalPages > 1) {
+                $('#paginationContainer').show();
+                console.log('📄 显示分页按钮，总页数:', totalPages, '当前页:', videoCurrentPage);
+                console.log('📄 分页按钮元素:', $('#paginationContainer').length, '个');
+                console.log('📄 分页按钮可见性:', $('#paginationContainer').is(':visible'));
+            } else {
+                $('#paginationContainer').hide();
+                console.log('📄 隐藏分页按钮，单页数据');
+            }
+        }
+
+        // 更新翻页按钮状态
+        function updatePaginationButtons(totalPages) {
+            const prevBtn = $('#prevPageBtn');
+            const nextBtn = $('#nextPageBtn');
+            
+            // 更新按钮状态
+            prevBtn.prop('disabled', videoCurrentPage <= 1);
+            nextBtn.prop('disabled', videoCurrentPage >= totalPages);
+            
+            // 添加视觉反馈
+            if (videoCurrentPage <= 1) {
+                prevBtn.addClass('btn-disabled');
+            } else {
+                prevBtn.removeClass('btn-disabled');
+            }
+            
+            if (videoCurrentPage >= totalPages) {
+                nextBtn.addClass('btn-disabled');
+            } else {
+                nextBtn.removeClass('btn-disabled');
+            }
+            
+            console.log('🔄 更新翻页按钮状态:', {
+                currentPage: videoCurrentPage,
+                totalPages: totalPages,
+                prevDisabled: videoCurrentPage <= 1,
+                nextDisabled: videoCurrentPage >= totalPages
+            });
+        }
+
+        // 上一页
+        async function goToPreviousPage() {
+            const prevPage = parseInt(videoCurrentPage, 10) - 1;
+            if (prevPage >= 1 && !videoIsLoading) {
+                console.log('⬅️ 前往上一页:', prevPage);
+                await loadPageData(prevPage);
+            }
+        }
+
+        // 下一页
+        async function goToNextPage() {
+            const nextPage = parseInt(videoCurrentPage, 10) + 1;
+            if (nextPage <= totalPages && !videoIsLoading) {
+                console.log('➡️ 前往下一页:', nextPage);
+                await loadPageData(nextPage);
+            }
+        }
+
+        // 加载指定页的数据
+        async function loadPageData(page) {
+            if (videoIsLoading || !currentSourceInfo) return;
+            
+            // 确保page是数字类型
+            const pageNum = parseInt(page, 10);
+            if (isNaN(pageNum) || pageNum < 1) {
+                showToast('无效的页码', 'error');
+                return;
+            }
+            
+            videoIsLoading = true;
+            
+            // 显示加载状态
+            $('#videoGrid').html('<div class="col-span-full text-center py-8"><div class="text-center"><div class="loading loading-spinner loading-lg"></div><p class="mt-4">正在加载第 ' + pageNum + ' 页...</p></div></div>');
+            
+            try {
+                // 记录请求开始时间
+                const startTime = performance.now();
+                
+                // 构建API请求URL
+                const params = new URLSearchParams();
+                params.set('source', currentSourceInfo.code);
+                if (currentKeyword) {
+                    params.set('keyword', currentKeyword);
+                } else if (currentTypeId === 'all') {
+                    params.set('latest', 'true');
+                } else {
+                    params.set('t', currentTypeId);
+                }
+                params.set('page', pageNum.toString());
+                
+                console.log('🔄 请求第', pageNum, '页，参数:', params.toString());
+                
+                const response = await fetch(`/api/source_search?${params.toString()}`);
+                const data = await response.json();
+                
+                // 计算响应时间
+                const endTime = performance.now();
+                const responseTime = Math.round(endTime - startTime);
+                
+                if (data.success) {
+                    // 更新全局变量
+                    videoCurrentPage = pageNum;
+                    
+                    // 更新响应时间显示
+                    updateResponseTime(responseTime);
+                    
+                    // 重新渲染视频卡片
+                    renderVideoCards(data, currentSourceInfo);
+                    
+                    // 滚动到顶部
+                    $('#videoGrid').scrollTop(0);
+                    
+                    showToast(`已加载第 ${pageNum} 页 (${responseTime}ms)`, 'success');
+                } else {
+                    showToast('加载失败: ' + data.message, 'error');
+                    // 恢复之前的内容
+                    renderCurrentPage();
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+                // 恢复之前的内容
+                renderCurrentPage();
+            } finally {
+                videoIsLoading = false;
+            }
+        }
+
+
+
+        // 加载源的类型列表
+        async function loadSourceTypes(sourceCode) {
+            try {
+                console.log('🏷️ 加载类型列表，源:', sourceCode);
+                
+                const response = await fetch(`/api/sources_manage/types?source=${sourceCode}`);
+                const data = await response.json();
+                
+                console.log('📊 类型列表响应:', data);
+                
+                if (data.success && data.data) {
+                    console.log('✅ 类型数据有效，开始渲染');
+                    console.log('📝 类型数量:', data.data.length);
+                    
+                    // 验证数量一致性
+                    const backendCount = data.count || 0;
+                    const actualCount = data.data.length;
+                    console.log('📊 数量验证:');
+                    console.log(`   后端count: ${backendCount}`);
+                    console.log(`   实际数量: ${actualCount}`);
+                    console.log(`   数量一致: ${backendCount === actualCount ? '✅ 是' : '⚠️ 否'}`);
+                    
+                    // 使用实际数量显示
+                    const displayCount = actualCount;
+                    
+                    renderTypeTags(data.data, sourceCode);
+                    $('#typeTagsContainer').show();
+                    
+                    // 使用更具体的选择器，确保选择测试弹窗中的类型数量元素
+                    const typeCountElement = $('#testResultModal #typeCount');
+                    if (typeCountElement.length > 0) {
+                        typeCountElement.text(`${displayCount} 个类型`);
+                        console.log('🎨 类型容器已显示');
+                        console.log('📊 类型数量已更新:', displayCount);
+                    } else {
+                        console.log('❌ 未找到类型数量元素');
+                    }
+                    
+                    // 初始化显示当前选中的类型
+                    updateSelectedTypeDisplay();
+                    
+                    console.log('✅ 类型列表加载成功，数量:', displayCount);
+                } else {
+                    console.log('❌ 类型列表加载失败:', data.message);
+                    $('#typeTagsContainer').hide();
+                }
+            } catch (error) {
+                console.log('❌ 类型列表请求失败:', error.message);
+                $('#typeTagsContainer').hide();
+            }
+        }
+
+        // 渲染类型标签
+        function renderTypeTags(types, sourceCode) {
+            console.log('🎨 开始渲染类型标签');
+            console.log('📝 类型数据:', types);
+            console.log('🔗 源代码:', sourceCode);
+            
+            const container = $('#typeTags');
+            console.log('📦 类型标签容器:', container.length > 0 ? '找到' : '未找到');
+            
+            if (container.length === 0) {
+                console.log('❌ 类型标签容器不存在，无法渲染');
+                return;
+            }
+            
+            container.empty();
+            console.log('🧹 容器已清空');
+            
+            // 添加"全部"标签
+            const allTag = $(`
+                <span class="type-tag all-types ${currentTypeId === 'all' ? 'active' : ''}" onclick="selectType('all', '${sourceCode}')">
+                    <i class="fas fa-list mr-1"></i>全部
+                </span>
+            `);
+            container.append(allTag);
+            console.log('➕ 添加"全部"标签');
+            
+            // 添加各个类型标签
+            types.forEach((type, index) => {
+                const isActive = currentTypeId === type.type_id.toString();
+                const typeTag = $(`
+                    <span class="type-tag ${isActive ? 'active' : ''}" onclick="selectType('${type.type_id}', '${sourceCode}')">
+                        ${type.type_name}
+                    </span>
+                `);
+                container.append(typeTag);
+                console.log(`➕ 添加类型标签 ${index + 1}: ${type.type_name} (ID: ${type.type_id})`);
+            });
+            
+            console.log('🏷️ 渲染类型标签完成，数量:', types.length + 1);
+            console.log('📦 容器内容:', container.html());
+            
+            // 更新当前选中的类型显示
+            updateSelectedTypeDisplay();
+        }
+
+        // 更新当前选中的类型显示
+        function updateSelectedTypeDisplay() {
+            const typeSelector = $('#typeSelector');
+            const selectedTypeName = $('.type-tag.active').text().trim();
+            
+            console.log('🔄 更新当前选择显示，选中类型:', selectedTypeName);
+            console.log('🔄 当前展开状态:', typeSelector.hasClass('expanded'));
+            
+            // 在收缩状态下显示当前选中的类型
+            if (!typeSelector.hasClass('expanded')) {
+                const displayText = selectedTypeName || '全部';
+                
+                // 检查是否已经有当前选择显示，如果没有才创建
+                if (typeSelector.find('.current-selection').length === 0) {
+                    console.log('➕ 创建当前选择显示');
+                    typeSelector.prepend(`
+                        <div class="current-selection">
+                            <div class="flex items-center justify-between">
+                                <span class="selected-type">当前选择: ${displayText}</span>
+                                <span class="hint-text">点击展开选择其他类型</span>
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    // 更新现有的当前选择显示
+                    console.log('🔄 更新当前选择显示');
+                    typeSelector.find('.selected-type').text(`当前选择: ${displayText}`);
+                }
+                
+                // 隐藏类型标签容器
+                const typeTags = typeSelector.find('#typeTags');
+                if (typeTags.length > 0) {
+                    typeTags.hide();
+                    console.log('👁️ 隐藏类型标签容器');
+                }
+            } else {
+                // 展开状态下，移除当前选择显示，显示类型标签
+                console.log('👁️ 展开状态，显示类型标签');
+                typeSelector.find('.current-selection').remove();
+                const typeTags = typeSelector.find('#typeTags');
+                if (typeTags.length > 0) {
+                    typeTags.show();
+                    console.log('✅ 显示类型标签容器');
+                }
+            }
+        }
+
+        // 选择类型
+        async function selectType(typeId, sourceCode) {
+            // 更新当前类型ID
+            currentTypeId = typeId;
+            
+            // 更新标签状态
+            $('.type-tag').removeClass('active');
+            if (typeId === 'all') {
+                $('.type-tag.all-types').addClass('active');
+            } else {
+                $(`.type-tag[onclick*="'${typeId}'"]`).addClass('active');
+            }
+            
+            // 自动收起类型选择器
+            const typeSelector = $('#typeSelector');
+            const toggleBtn = $('#toggleTypeBtn');
+            if (typeSelector.hasClass('expanded')) {
+                typeSelector.removeClass('expanded');
+                toggleBtn.removeClass('expanded');
+                toggleBtn.html('<i class="fas fa-chevron-down mr-1"></i>展开');
+            }
+            
+            // 重置分页
+            videoCurrentPage = 1;
+            
+            // 构建搜索参数
+            const params = new URLSearchParams();
+            params.set('source', sourceCode);
+            if (typeId === 'all') {
+                params.set('latest', 'true');
+            } else {
+                params.set('t', typeId);
+            }
+            params.set('page', '1');
+            
+            console.log('🔍 选择类型:', typeId, '参数:', params.toString());
+            
+            try {
+                const response = await fetch(`/api/source_search?${params.toString()}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 重新渲染视频卡片
+                    renderVideoCards(data, currentSourceInfo);
+                    
+                    // 滚动到顶部
+                    $('#videoGrid').scrollTop(0);
+                    
+                    showToast(`已加载 ${typeId === 'all' ? '全部' : '类型'} 视频`, 'success');
+                } else {
+                    showToast('加载失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 更新响应时间显示
+        function updateResponseTime(responseTime) {
+            const statusElement = $('#testStatus');
+            const currentText = statusElement.text();
+            
+            // 移除之前的响应时间（如果存在）
+            const textWithoutTime = currentText.replace(/\s*\(\d+ms\)$/, '');
+            
+            // 添加新的响应时间
+            statusElement.text(textWithoutTime + ` (${responseTime}ms)`);
+            
+            console.log('⏱️ 更新响应时间:', responseTime + 'ms');
+        }
+
+        // 滚动监听功能（已取消自动翻页）
+        function setupScrollAutoLoad() {
+            // 移除滚动自动翻页功能，只保留滚动条样式
+            console.log('📜 滚动自动翻页功能已取消');
+        }
+
+        // 初始化滚动自动加载
+        $(document).ready(function() {
+            setupScrollAutoLoad();
+        });
+
+        // 创建单个视频卡片 - 参照index_mobile.html
+        function createVideoCard(video, sourceInfo) {
+            // 提取视频信息，兼容不同的数据格式
+            const title = video.vod_name || video.title || video.name || '未知标题';
+            const cover = video.vod_pic || video.cover || video.pic || '';
+            const year = video.vod_year || video.year || video.pubdate || '';
+            const rate = video.vod_score || video.rate || video.rating || '';
+            const type = video.type_name || video.type || video.category || '';
+            const tag = video.tag || '';
+            
+            // 确定封面图片URL
+            const defaultCover = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMjMyNDRhIi8+CjxwYXRoIGQ9Ik0xMDAgMTUwTDE1MCAxMDBIMTAwVjE1MFoiIGZpbGw9IiM2YzYzZmYiLz4KPHN2Zz4=';
+            const finalCoverUrl = (cover && cover.trim() && !cover.includes('placeholder.com')) 
+                ? cover 
+                : defaultCover;
+            
+            const card = $(`
+                <div class="video-card">
+                    <img class="video-cover" src="${finalCoverUrl}" alt="${title}" loading="lazy" referrerpolicy="no-referrer" onerror="this.src='${defaultCover}';">
+                    <div class="video-info">
+                        <div class="video-title">${title}</div>
+                        <div class="video-meta">
+                            ${type ? `<span class="meta-badge type">${type}</span>` : ''}
+                            ${tag ? `<span class="meta-badge tag">${tag}</span>` : ''}
+                            ${rate ? `<span class="meta-badge rate">★ ${rate}</span>` : ''}
+                            ${year ? `<span class="meta-badge year">${year}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `);
+            
+            // 添加点击事件，显示视频详情
+            card.on('click', () => {
+                showVideoDetail(video, sourceInfo);
+            });
+            
+            return card;
+        }
+
+        // 显示视频详情
+        function showVideoDetail(video, sourceInfo) {
+            const title = video.vod_name || video.title || video.name || '未知标题';
+            const content = video.vod_content || video.content || video.description || '';
+            const actor = video.vod_actor || video.actor || '';
+            const director = video.vod_director || video.director || '';
+            const year = video.vod_year || video.year || video.pubdate || '';
+            const rate = video.vod_score || video.rate || video.rating || '';
+            const type = video.type_name || video.type || video.category || '';
+            
+            const detailHtml = `
+                <div class="p-4">
+                    <h3 class="text-lg font-bold mb-4">${title}</h3>
+                    <div class="space-y-2 text-sm">
+                        ${type ? `<p><strong>类型:</strong> ${type}</p>` : ''}
+                        ${year ? `<p><strong>年份:</strong> ${year}</p>` : ''}
+                        ${rate ? `<p><strong>评分:</strong> ${rate}</p>` : ''}
+                        ${director ? `<p><strong>导演:</strong> ${director}</p>` : ''}
+                        ${actor ? `<p><strong>演员:</strong> ${actor}</p>` : ''}
+                        ${content ? `<p><strong>简介:</strong> ${content}</p>` : ''}
+                        <p><strong>来源:</strong> ${sourceInfo.name} (${sourceInfo.code})</p>
+                    </div>
+                </div>
+            `;
+            
+            // 使用DaisyUI的modal显示详情
+            const modalId = 'videoDetailModal';
+            if ($(`#${modalId}`).length === 0) {
+                $('body').append(`
+                    <dialog id="${modalId}" class="modal">
+                        <div class="modal-box">
+                            <form method="dialog">
+                                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                            </form>
+                            <div id="videoDetailContent"></div>
+                        </div>
+                    </dialog>
+                `);
+            }
+            
+            $(`#videoDetailContent`).html(detailHtml);
+            $(`#${modalId}`)[0].showModal();
+        }
+
+        // 显示模态框
+        function showUploadModal() {
+            $('#uploadModal')[0].showModal();
+        }
+
+        function showRemoteUpdateModal() {
+            $('#remoteUpdateModal')[0].showModal();
+        }
+
+        // 测试远程URL
+        async function testRemoteUrl() {
+            const url = $('#remoteUrl').val();
+            if (!url) {
+                showToast('请输入远程URL', 'warning');
+                return;
+            }
+
+            showToast('正在测试远程URL...', 'info');
+            
+            try {
+                const response = await fetch(`/api/sources_manage/test_remote?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('远程URL测试成功', 'success');
+                } else {
+                    showToast('远程URL测试失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 表单提交处理
+        $('#sourceForm').on('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                code: $('#sourceCode').val(),
+                name: $('#sourceName').val(),
+                url: $('#sourceUrl').val(),
+                enabled: $('#sourceEnabled').is(':checked'),
+                is_default: $('#sourceDefault').is(':checked')
+            };
+
+            try {
+                const url = editingSource ? 
+                    `/api/sources_manage/${editingSource.code}` : 
+                    '/api/sources_manage';
+                
+                const method = editingSource ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(editingSource ? '视频源更新成功' : '视频源添加成功', 'success');
+                    closeSourceModal();
+                    loadSourcesList();
+                } else {
+                    showToast('操作失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        });
+
+        // 文件上传处理
+        $('#uploadForm').on('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = $('#configFile')[0];
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('请选择文件', 'warning');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/sources_manage/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('配置文件上传成功', 'success');
+                    closeUploadModal();
+                    loadSourcesList();
+                } else {
+                    showToast('上传失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        });
+
+        // 远程URL更新处理
+        $('#remoteUpdateForm').on('submit', async function(e) {
+            e.preventDefault();
+            
+            const url = $('#remoteUrl').val();
+            
+            try {
+                const response = await fetch('/api/sources_manage/update_from_url', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('远程配置更新成功', 'success');
+                    closeRemoteUpdateModal();
+                    loadSourcesList();
+                } else {
+                    showToast('更新失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        });
+
+        // 切换视频源状态
+        async function toggleSourceStatus(code, enabled) {
+            console.log(`🔍 切换源状态: code=${code}, enabled=${enabled}`);
+            console.log(`📋 当前sourcesList:`, sourcesList);
+            
+            const source = sourcesList.find(s => s.code === code);
+            if (!source) {
+                console.log(`❌ 在sourcesList中未找到源: ${code}`);
+                showToast('未找到指定的视频源', 'error');
+                return;
+            }
+            
+            console.log(`✅ 找到源:`, source);
+
+            // 立即更新开关视觉状态
+            const card = $(`.card[data-source-code="${code}"]`);
+            const enableSwitch = card.find('.custom-switch').first();
+            if (enabled) {
+                enableSwitch.addClass('enabled');
+            } else {
+                enableSwitch.removeClass('enabled');
+            }
+
+            try {
+                const response = await fetch(`/api/sources_manage/${code}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...source,
+                        enabled: enabled
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(`视频源 ${source.name} 已${enabled ? '启用' : '禁用'}`, 'success');
+                    // 更新本地数据
+                    source.enabled = enabled;
+                    // 重新渲染卡片以更新背景色
+                    renderSourcesCards();
+                } else {
+                    showToast('状态更新失败: ' + data.message, 'error');
+                    // 恢复开关状态
+                    if (!enabled) {
+                        enableSwitch.addClass('enabled');
+                    } else {
+                        enableSwitch.removeClass('enabled');
+                    }
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+                // 恢复开关状态
+                if (!enabled) {
+                    enableSwitch.addClass('enabled');
+                } else {
+                    enableSwitch.removeClass('enabled');
+                }
+            }
+        }
+
+        // 切换视频源默认状态
+        async function toggleSourceDefault(code, isDefault) {
+            console.log(`🔍 切换源默认状态: code=${code}, isDefault=${isDefault}`);
+            console.log(`📋 当前sourcesList:`, sourcesList);
+            
+            const source = sourcesList.find(s => s.code === code);
+            if (!source) {
+                console.log(`❌ 在sourcesList中未找到源: ${code}`);
+                showToast('未找到指定的视频源', 'error');
+                return;
+            }
+            
+            console.log(`✅ 找到源:`, source);
+
+            // 立即更新开关视觉状态
+            const card = $(`.card[data-source-code="${code}"]`);
+            const defaultSwitch = card.find('.custom-switch').last();
+            if (isDefault) {
+                defaultSwitch.addClass('default');
+            } else {
+                defaultSwitch.removeClass('default');
+            }
+
+            try {
+                const response = await fetch(`/api/sources_manage/${code}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...source,
+                        is_default: isDefault
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(`视频源 ${source.name} 已${isDefault ? '设为默认' : '取消默认'}`, 'success');
+                    // 更新本地数据
+                    source.is_default = isDefault;
+                    // 重新渲染卡片以更新背景色
+                    renderSourcesCards();
+                } else {
+                    showToast('默认状态更新失败: ' + data.message, 'error');
+                    // 恢复开关状态
+                    if (!isDefault) {
+                        defaultSwitch.addClass('default');
+                    } else {
+                        defaultSwitch.removeClass('default');
+                    }
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+                // 恢复开关状态
+                if (!isDefault) {
+                    defaultSwitch.addClass('default');
+                } else {
+                    defaultSwitch.removeClass('default');
+                }
+            }
+        }
+
+
+
+        // 点击模态框外部关闭
+        $(document).on('click', '.modal', function(e) {
+            if (e.target === this) {
+                this.close();
+            }
+        });
+
+        // 切换类型标签
+        function toggleTypeSelector() {
+            console.log('🔄 切换类型选择器');
+            
+            const typeSelector = $('#typeSelector');
+            const toggleBtn = $('#toggleTypeBtn');
+            const icon = toggleBtn.find('i');
+            
+            console.log('📦 类型选择器状态:', typeSelector.hasClass('expanded') ? '展开' : '收缩');
+            
+            if (typeSelector.hasClass('expanded')) {
+                // 收起
+                console.log('📥 收起类型选择器');
+                typeSelector.removeClass('expanded');
+                toggleBtn.removeClass('expanded');
+                icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                toggleBtn.html('<i class="fas fa-chevron-down mr-1"></i>展开');
+                
+                // 更新显示当前选中的类型
+                updateSelectedTypeDisplay();
+            } else {
+                // 展开
+                console.log('📤 展开类型选择器');
+                typeSelector.addClass('expanded');
+                toggleBtn.addClass('expanded');
+                icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                toggleBtn.html('<i class="fas fa-chevron-up mr-1"></i>收起');
+                
+                // 确保类型标签可见
+                updateSelectedTypeDisplay();
+            }
+            
+            console.log('✅ 切换完成，新状态:', typeSelector.hasClass('expanded') ? '展开' : '收缩');
+        }
+
+        // 切换视图模式
+        function switchViewMode(mode) {
+            console.log('🔄 切换视图模式:', mode);
+            
+            // 更新当前视图模式
+            currentViewMode = mode;
+            
+            // 更新按钮状态
+            $('.btn-group .btn').removeClass('active');
+            $(`#${mode}ViewBtn`).addClass('active');
+            
+            // 更新视频网格样式
+            const videoGrid = $('#videoGrid');
+            videoGrid.removeClass('list-view compact-view');
+            
+            switch (mode) {
+                case 'grid':
+                    // 网格视图（默认）
+                    videoGrid.addClass('grid-view');
+                    console.log('✅ 切换到网格视图');
+                    break;
+                case 'list':
+                    // 列表视图
+                    videoGrid.addClass('list-view');
+                    console.log('✅ 切换到列表视图');
+                    break;
+                case 'compact':
+                    // 紧凑视图
+                    videoGrid.addClass('compact-view');
+                    console.log('✅ 切换到紧凑视图');
+                    break;
+                default:
+                    console.log('❌ 未知视图模式:', mode);
+                    return;
+            }
+            
+            // 重新渲染当前页视频以应用新样式
+            if (currentVideoData && currentVideoData.length > 0) {
+                renderCurrentPage();
+            }
+            
+            // 显示切换提示
+            const modeNames = {
+                'grid': '网格视图',
+                'list': '列表视图',
+                'compact': '紧凑视图'
+            };
+            showToast(`已切换到${modeNames[mode]}`, 'success');
+        }
+    </script>
+</body>
+</html> 

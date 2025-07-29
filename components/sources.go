@@ -20,6 +20,7 @@ type VideoSource struct {
 	Name      string `json:"name"`
 	URL       string `json:"url"`
 	IsDefault bool   `json:"is_default"`
+	Enabled   bool   `json:"enabled"`
 }
 
 // VideoItem 视频项目结构
@@ -45,6 +46,8 @@ type SearchResponse struct {
 	Message string      `json:"message"`
 	Data    []VideoItem `json:"data"`
 	Count   int         `json:"count"`
+	// 原始API响应数据
+	RawData map[string]interface{} `json:"raw_data,omitempty"`
 }
 
 // VideoItemWithGlobalType 带全局类型的视频项目结构
@@ -97,16 +100,12 @@ func (sc *SourcesConfig) LoadFromConfigFile(configData []byte) error {
 
 	// 从JSON配置构建VideoSource对象
 	for code, sourceConfig := range config.Sources {
-		// 只处理启用的源
-		if !sourceConfig.Enabled {
-			continue
-		}
-
 		source := VideoSource{
 			Code:      code,
 			Name:      sourceConfig.Name,
 			URL:       sourceConfig.URL,
 			IsDefault: sourceConfig.IsDefault,
+			Enabled:   sourceConfig.Enabled,
 		}
 
 		sc.sources = append(sc.sources, source)
@@ -190,6 +189,7 @@ func (sc *SourcesConfig) HandleSourceSearchAPI(w http.ResponseWriter, r *http.Re
 	sourceCode := r.URL.Query().Get("source")
 	keyword := r.URL.Query().Get("keyword")
 	page := r.URL.Query().Get("page")
+	typeId := r.URL.Query().Get("t") // 添加类型ID参数
 	isLatest := r.URL.Query().Get("latest") == "true"
 
 	if sourceCode == "" {
@@ -203,13 +203,13 @@ func (sc *SourcesConfig) HandleSourceSearchAPI(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// 如果不是获取最新推荐，则keyword是必需的
-	if !isLatest && keyword == "" {
+	// 如果不是获取最新推荐，则keyword是必需的（除非指定了类型ID）
+	if !isLatest && keyword == "" && typeId == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"success": false,
-			"message": "Missing keyword parameter",
+			"message": "Missing keyword parameter or type ID",
 			"data":    []VideoItem{},
 		})
 		return
@@ -229,7 +229,7 @@ func (sc *SourcesConfig) HandleSourceSearchAPI(w http.ResponseWriter, r *http.Re
 	}
 
 	// 执行搜索
-	results, err := sc.searchSource(source, keyword, page)
+	rawResults, err := sc.searchSource(source, keyword, page, typeId)
 	if err != nil {
 		log.Printf("❌ 搜索失败: %v [IP:%s]", err, utils.GetRequestIP(r))
 		w.Header().Set("Content-Type", "application/json")
@@ -242,16 +242,84 @@ func (sc *SourcesConfig) HandleSourceSearchAPI(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// 返回搜索结果
+	// 从原始数据中提取视频列表
+	var videos []VideoItem
+	if list, ok := rawResults["list"].([]interface{}); ok {
+		log.Printf("✅ 找到list字段，包含 %d 个视频", len(list))
+		for _, item := range list {
+			if videoMap, ok := item.(map[string]interface{}); ok {
+				typeName := getString(videoMap, "type_name")
+
+				video := VideoItem{
+					VodName:     getString(videoMap, "vod_name"),
+					VodPic:      getString(videoMap, "vod_pic"),
+					VodYear:     getString(videoMap, "vod_year"),
+					TypeName:    typeName,
+					VodScore:    getString(videoMap, "vod_score"),
+					VodContent:  getString(videoMap, "vod_content"),
+					VodActor:    getString(videoMap, "vod_actor"),
+					VodDirector: getString(videoMap, "vod_director"),
+					VodArea:     getString(videoMap, "vod_area"),
+					VodLang:     getString(videoMap, "vod_lang"),
+					VodTime:     getString(videoMap, "vod_time"),
+					VodRemarks:  getString(videoMap, "vod_remarks"),
+					VodPlayUrl:  getString(videoMap, "vod_play_url"),
+				}
+				videos = append(videos, video)
+			}
+		}
+	} else {
+		log.Printf("⚠️ 未找到list字段，尝试其他字段名")
+		// 尝试其他可能的字段名
+		for _, fieldName := range []string{"data", "videos", "results", "items"} {
+			if list, ok := rawResults[fieldName].([]interface{}); ok {
+				log.Printf("✅ 找到%s字段，包含 %d 个视频", fieldName, len(list))
+				for _, item := range list {
+					if videoMap, ok := item.(map[string]interface{}); ok {
+						typeName := getString(videoMap, "type_name")
+
+						video := VideoItem{
+							VodName:     getString(videoMap, "vod_name"),
+							VodPic:      getString(videoMap, "vod_pic"),
+							VodYear:     getString(videoMap, "vod_year"),
+							TypeName:    typeName,
+							VodScore:    getString(videoMap, "vod_score"),
+							VodContent:  getString(videoMap, "vod_content"),
+							VodActor:    getString(videoMap, "vod_actor"),
+							VodDirector: getString(videoMap, "vod_director"),
+							VodArea:     getString(videoMap, "vod_area"),
+							VodLang:     getString(videoMap, "vod_lang"),
+							VodTime:     getString(videoMap, "vod_time"),
+							VodRemarks:  getString(videoMap, "vod_remarks"),
+							VodPlayUrl:  getString(videoMap, "vod_play_url"),
+						}
+						videos = append(videos, video)
+					}
+				}
+				break
+			}
+		}
+	}
+
+	// 构建响应
 	response := SearchResponse{
 		Success: true,
 		Message: "搜索成功",
-		Data:    results,
-		Count:   len(results),
+		Data:    videos,
+		Count:   len(videos),
+		RawData: rawResults, // 包含原始API响应数据
 	}
 
+	// 设置响应头
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+
+	// 编码并发送响应
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("❌ 编码响应失败: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	log.Printf("✅ /api/source_search 请求 [IP:%s]", utils.GetRequestIP(r))
 }
 
@@ -302,7 +370,7 @@ func HandleScorpioSourcesAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 // searchSource 搜索指定源
-func (sc *SourcesConfig) searchSource(source *VideoSource, keyword, page string) ([]VideoItem, error) {
+func (sc *SourcesConfig) searchSource(source *VideoSource, keyword, page, typeId string) (map[string]interface{}, error) {
 	// 构建请求URL
 	baseURL := source.URL
 	if !strings.HasSuffix(baseURL, "/") {
@@ -315,10 +383,13 @@ func (sc *SourcesConfig) searchSource(source *VideoSource, keyword, page string)
 	// 统一使用 videolist 接口
 	params.Set("ac", "videolist")
 
-	// 判断是搜索还是获取最新推荐
-	if keyword == "" {
+	// 判断是搜索、获取最新推荐还是按类型筛选
+	if keyword == "" && typeId == "" {
 		// 获取最新推荐 - 使用默认参数
 		params.Set("pg", "1") // 第一页
+	} else if typeId != "" {
+		// 按类型筛选
+		params.Set("t", typeId)
 	} else {
 		// 搜索 - 添加关键词
 		params.Set("wd", keyword)
@@ -373,48 +444,25 @@ func (sc *SourcesConfig) searchSource(source *VideoSource, keyword, page string)
 
 	// 添加调试日志
 	log.Printf("🔍 API响应状态: 成功")
-
-	// 提取视频列表
-	var videos []VideoItem
-
-	// 尝试不同的数据结构
-	if list, ok := result["list"].([]interface{}); ok {
-		log.Printf("✅ 找到list字段，包含 %d 个视频", len(list))
-		for _, item := range list {
-			if videoMap, ok := item.(map[string]interface{}); ok {
-				typeName := getString(videoMap, "type_name")
-
-				video := VideoItem{
-					VodName:     getString(videoMap, "vod_name"),
-					VodPic:      getString(videoMap, "vod_pic"),
-					VodYear:     getString(videoMap, "vod_year"),
-					TypeName:    typeName,
-					VodScore:    getString(videoMap, "vod_score"),
-					VodContent:  getString(videoMap, "vod_content"),
-					VodActor:    getString(videoMap, "vod_actor"),
-					VodDirector: getString(videoMap, "vod_director"),
-					VodArea:     getString(videoMap, "vod_area"),
-					VodLang:     getString(videoMap, "vod_lang"),
-					VodTime:     getString(videoMap, "vod_time"),
-					VodRemarks:  getString(videoMap, "vod_remarks"),
-					VodPlayUrl:  getString(videoMap, "vod_play_url"),
-				}
-
-				// 如果启用了类型映射，尝试转换类型
-				if sc.typeMappingManager != nil && typeName != "" {
-					// 这里需要从视频数据中提取type_id，暂时跳过
-					// TODO: 从视频数据中提取type_id进行映射
-					log.Printf("🔗 类型映射: %s (源: %s) - 需要type_id进行映射", typeName, source.Code)
-				}
-
-				videos = append(videos, video)
-			}
-		}
-	} else {
-		log.Printf("❌ 未找到list字段或格式不正确，result keys: %v", getMapKeys(result))
+	if typeId != "" {
+		log.Printf("🔍 类型筛选: t=%s", typeId)
 	}
 
-	return videos, nil
+	// 记录原始响应数据
+	log.Printf("🔍 原始API响应包含字段: %v", getMapKeys(result))
+
+	// 记录分页信息
+	if total, ok := result["total"].(float64); ok {
+		log.Printf("📊 总数据量: %.0f", total)
+	}
+	if pageCount, ok := result["pagecount"].(float64); ok {
+		log.Printf("📄 总页数: %.0f", pageCount)
+	}
+	if currentPage, ok := result["page"].(float64); ok {
+		log.Printf("📖 当前页: %.0f", currentPage)
+	}
+
+	return result, nil
 }
 
 // getString 安全地从map中获取字符串值

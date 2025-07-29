@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频源管理 - VastVideo-Go</title>
+    
+    <!-- Tailwind CSS + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+        
+        .default-source {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left: 4px solid #ffc107;
+        }
+        
+        .default-source:hover {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        }
+        
+        .json-viewer {
+            background: #1a202c;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .json-viewer pre {
+            color: #e2e8f0;
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+        }
+        
+        .toast {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- 加载遮罩 -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="text-center">
+            <div class="spinner mb-4"></div>
+            <p class="text-white text-lg">正在加载...</p>
+        </div>
+    </div>
+
+    <!-- Toast 通知容器 -->
+    <div class="toast-container"></div>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- 头部卡片 -->
+        <div class="card glass-effect text-white mb-8 animate-fade-in">
+            <div class="card-body text-center">
+                <h1 class="text-4xl font-bold mb-2">
+                    <i class="fas fa-film mr-3"></i>视频源管理
+                </h1>
+                <p class="text-lg opacity-90">管理 VastVideo-Go 的视频源配置</p>
+            </div>
+        </div>
+
+        <!-- 工具栏 -->
+        <div class="card bg-base-100 shadow-xl mb-6 animate-slide-up">
+            <div class="card-body">
+                <div class="flex flex-wrap gap-4 items-center">
+                    <button class="btn btn-primary" onclick="showAddModal()">
+                        <i class="fas fa-plus mr-2"></i>添加源
+                    </button>
+                    <button class="btn btn-success" onclick="showUploadModal()">
+                        <i class="fas fa-upload mr-2"></i>上传配置
+                    </button>
+                    <button class="btn btn-info" onclick="showUrlModal()">
+                        <i class="fas fa-globe mr-2"></i>远程更新
+                    </button>
+                    <button class="btn btn-warning" onclick="refreshSources()">
+                        <i class="fas fa-sync-alt mr-2"></i>刷新列表
+                    </button>
+                    <div class="form-control flex-1 min-w-64">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" placeholder="搜索视频源..." 
+                                   class="input input-bordered w-full" onkeyup="filterSources()">
+                            <button class="btn btn-square">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 视频源表格 -->
+        <div class="card bg-base-100 shadow-xl animate-slide-up">
+            <div class="card-body">
+                <div class="overflow-x-auto">
+                    <table id="sourcesTable" class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>代码</th>
+                                <th>名称</th>
+                                <th>URL</th>
+                                <th>状态</th>
+                                <th>默认</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sourcesTableBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑源模态框 -->
+    <dialog id="sourceModal" class="modal">
+        <div class="modal-box w-11/12 max-w-2xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal('sourceModal')">✕</button>
+            </form>
+            <h3 id="modalTitle" class="font-bold text-lg mb-4">添加视频源</h3>
+            <form id="sourceForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">源代码 *</span>
+                        </label>
+                        <input type="text" id="sourceCode" class="input input-bordered" required placeholder="例如: bfzy">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">源名称 *</span>
+                        </label>
+                        <input type="text" id="sourceName" class="input input-bordered" required placeholder="例如: 暴风资源">
+                    </div>
+                </div>
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">API URL *</span>
+                    </label>
+                    <input type="url" id="sourceUrl" class="input input-bordered" required 
+                           placeholder="例如: https://bfzyapi.com/api.php/provide/vod">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="form-control">
+                        <label class="label cursor-pointer">
+                            <span class="label-text">启用</span>
+                            <input type="checkbox" id="sourceEnabled" class="toggle toggle-primary" checked>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label class="label cursor-pointer">
+                            <span class="label-text">设为默认</span>
+                            <input type="checkbox" id="sourceDefault" class="toggle toggle-warning">
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-2"></i>保存
+                    </button>
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('sourceModal')">取消</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 文件上传模态框 -->
+    <dialog id="uploadModal" class="modal">
+        <div class="modal-box w-11/12 max-w-lg">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal('uploadModal')">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">上传配置文件</h3>
+            <form id="uploadForm">
+                <div class="form-control mb-6">
+                    <label class="label">
+                        <span class="label-text">选择 JSON 配置文件</span>
+                    </label>
+                    <input type="file" id="configFile" class="file-input file-input-bordered w-full" accept=".json" required>
+                    <label class="label">
+                        <span class="label-text-alt">支持标准的 sources.json 格式文件</span>
+                    </label>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload mr-2"></i>上传并更新
+                    </button>
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('uploadModal')">取消</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 远程URL更新模态框 -->
+    <dialog id="urlModal" class="modal">
+        <div class="modal-box w-11/12 max-w-lg">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal('urlModal')">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">远程URL更新</h3>
+            <form id="urlForm">
+                <div class="form-control mb-6">
+                    <label class="label">
+                        <span class="label-text">远程配置文件URL</span>
+                    </label>
+                    <div class="input-group">
+                        <input type="url" id="remoteUrl" class="input input-bordered flex-1" 
+                               required placeholder="例如: https://example.com/sources.json">
+                        <button type="button" class="btn btn-info" onclick="testRemoteUrl()">
+                            <i class="fas fa-vial mr-2"></i>测试
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-download mr-2"></i>更新配置
+                    </button>
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('urlModal')">取消</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 测试结果弹出框 -->
+    <dialog id="testResultModal" class="modal">
+        <div class="modal-box w-11/12 max-w-4xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal('testResultModal')">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">测试结果</h3>
+            <div id="testResultContent">
+                <div class="card bg-base-200 mb-4">
+                    <div class="card-body">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <p class="text-sm opacity-70">视频源</p>
+                                <p class="font-semibold" id="testSourceName"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm opacity-70">测试时间</p>
+                                <p class="font-semibold" id="testTime"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm opacity-70">状态</p>
+                                <p class="font-semibold" id="testStatus"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">返回数据</span>
+                    </label>
+                    <div class="json-viewer">
+                        <pre id="testResultJson"></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button class="btn btn-primary" onclick="closeModal('testResultModal')">
+                    <i class="fas fa-times mr-2"></i>关闭
+                </button>
+                <button class="btn btn-info" onclick="copyTestResult()">
+                    <i class="fas fa-copy mr-2"></i>复制JSON
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        let sources = [];
+        let editingSource = null;
+
+        // 页面加载时获取视频源列表
+        $(document).ready(function() {
+            refreshSources();
+        });
+
+        // 获取视频源列表
+        async function refreshSources() {
+            showLoading(true);
+            try {
+                const response = await fetch('/api/sources');
+                const data = await response.json();
+                
+                if (data.success) {
+                    sources = data.data;
+                    renderSourcesTable();
+                    showToast('视频源列表已刷新', 'success');
+                } else {
+                    showToast('获取视频源列表失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 渲染视频源表格
+        function renderSourcesTable() {
+            const tbody = $('#sourcesTableBody');
+            tbody.empty();
+
+            // 对视频源进行排序：默认源排在前面，然后按名称排序
+            const sortedSources = [...sources].sort((a, b) => {
+                if (a.is_default && !b.is_default) return -1;
+                if (!a.is_default && b.is_default) return 1;
+                return a.name.localeCompare(b.name);
+            });
+
+            sortedSources.forEach(source => {
+                const rowClass = source.is_default ? 'default-source' : '';
+                const row = $(`
+                    <tr class="${rowClass} hover">
+                        <td><span class="font-mono font-bold">${source.code}</span></td>
+                        <td>${source.name}</td>
+                        <td class="max-w-xs truncate" title="${source.url}">${source.url}</td>
+                        <td>
+                            <div class="badge ${source.enabled ? 'badge-success' : 'badge-error'}">
+                                ${source.enabled ? '启用' : '禁用'}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="badge ${source.is_default ? 'badge-warning' : 'badge-ghost'}">
+                                ${source.is_default ? '默认' : '否'}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button class="btn btn-xs btn-info" onclick="testSource('${source.code}')">
+                                    <i class="fas fa-vial mr-1"></i>测试
+                                </button>
+                                <button class="btn btn-xs btn-warning" onclick="editSource('${source.code}')">
+                                    <i class="fas fa-edit mr-1"></i>编辑
+                                </button>
+                                <button class="btn btn-xs btn-error" onclick="deleteSource('${source.code}')">
+                                    <i class="fas fa-trash mr-1"></i>删除
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+                tbody.append(row);
+            });
+        }
+
+        // 过滤视频源
+        function filterSources() {
+            const searchTerm = $('#searchInput').val().toLowerCase();
+            $('#sourcesTableBody tr').each(function() {
+                const text = $(this).text().toLowerCase();
+                $(this).toggle(text.includes(searchTerm));
+            });
+        }
+
+        // 显示添加源模态框
+        function showAddModal() {
+            editingSource = null;
+            $('#modalTitle').text('添加视频源');
+            $('#sourceForm')[0].reset();
+            $('#sourceCode').prop('disabled', false);
+            $('#sourceModal')[0].showModal();
+        }
+
+        // 显示编辑源模态框
+        function editSource(code) {
+            const source = sources.find(s => s.code === code);
+            if (!source) {
+                showToast('未找到指定的视频源', 'error');
+                return;
+            }
+
+            editingSource = source;
+            $('#modalTitle').text('编辑视频源');
+            $('#sourceCode').val(source.code).prop('disabled', true);
+            $('#sourceName').val(source.name);
+            $('#sourceUrl').val(source.url);
+            $('#sourceEnabled').prop('checked', source.enabled);
+            $('#sourceDefault').prop('checked', source.is_default);
+            
+            $('#sourceModal')[0].showModal();
+        }
+
+        // 删除视频源
+        async function deleteSource(code) {
+            if (!confirm(`确定要删除视频源 "${code}" 吗？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/sources_manage/${code}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('视频源删除成功', 'success');
+                    refreshSources();
+                } else {
+                    showToast('删除失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 测试视频源
+        async function testSource(code) {
+            const source = sources.find(s => s.code === code);
+            if (!source) {
+                showToast('未找到指定的视频源', 'error');
+                return;
+            }
+
+            showToast(`正在测试 ${source.name}...`, 'info');
+            
+            const startTime = new Date();
+            let testResult = {
+                success: false,
+                data: null,
+                error: null,
+                responseTime: 0,
+                sourceInfo: source
+            };
+            
+            try {
+                const response = await fetch(`/api/source_search?source=${code}&latest=true&page=1`);
+                const data = await response.json();
+                const endTime = new Date();
+                
+                testResult = {
+                    success: data.success,
+                    data: data,
+                    error: data.success ? null : data.message,
+                    responseTime: endTime - startTime,
+                    sourceInfo: source,
+                    timestamp: endTime
+                };
+                
+                if (data.success) {
+                    showToast(`${source.name} 测试成功，获取到 ${data.count} 条数据`, 'success');
+                } else {
+                    showToast(`${source.name} 测试失败: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                const endTime = new Date();
+                testResult = {
+                    success: false,
+                    data: null,
+                    error: error.message,
+                    responseTime: endTime - startTime,
+                    sourceInfo: source,
+                    timestamp: endTime
+                };
+                showToast(`${source.name} 测试失败: ${error.message}`, 'error');
+            }
+            
+            showTestResult(testResult);
+        }
+
+        // 显示文件上传模态框
+        function showUploadModal() {
+            $('#uploadModal')[0].showModal();
+        }
+
+        // 显示远程URL更新模态框
+        function showUrlModal() {
+            $('#urlModal')[0].showModal();
+        }
+
+        // 测试远程URL
+        async function testRemoteUrl() {
+            const url = $('#remoteUrl').val();
+            if (!url) {
+                showToast('请输入远程URL', 'warning');
+                return;
+            }
+
+            showToast('正在测试远程URL...', 'info');
+            
+            try {
+                const response = await fetch(`/api/sources_manage/test_remote?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('远程URL测试成功', 'success');
+                } else {
+                    showToast('远程URL测试失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        }
+
+        // 关闭模态框
+        function closeModal(modalId) {
+            $(`#${modalId}`)[0].close();
+        }
+
+        // 显示加载状态
+        function showLoading(show) {
+            if (show) {
+                $('#loadingOverlay').removeClass('hidden');
+            } else {
+                $('#loadingOverlay').addClass('hidden');
+            }
+        }
+
+        // 显示Toast通知
+        function showToast(message, type = 'info') {
+            const toastId = 'toast-' + Date.now();
+            const iconMap = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            const alertClass = {
+                success: 'alert-success',
+                error: 'alert-error',
+                warning: 'alert-warning',
+                info: 'alert-info'
+            };
+            
+            const toast = $(`
+                <div id="${toastId}" class="alert ${alertClass[type]} shadow-lg toast">
+                    <i class="${iconMap[type]}"></i>
+                    <span>${message}</span>
+                </div>
+            `);
+            
+            $('.toast-container').append(toast);
+            
+            setTimeout(() => {
+                toast.addClass('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.removeClass('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // 表单提交处理
+        $('#sourceForm').on('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                code: $('#sourceCode').val(),
+                name: $('#sourceName').val(),
+                url: $('#sourceUrl').val(),
+                enabled: $('#sourceEnabled').is(':checked'),
+                is_default: $('#sourceDefault').is(':checked')
+            };
+
+            try {
+                const url = editingSource ? 
+                    `/api/sources_manage/${editingSource.code}` : 
+                    '/api/sources_manage';
+                
+                const method = editingSource ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(editingSource ? '视频源更新成功' : '视频源添加成功', 'success');
+                    closeModal('sourceModal');
+                    refreshSources();
+                } else {
+                    showToast('操作失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        });
+
+        // 文件上传处理
+        $('#uploadForm').on('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = $('#configFile')[0];
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('请选择文件', 'warning');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/sources_manage/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('配置文件上传成功', 'success');
+                    closeModal('uploadModal');
+                    refreshSources();
+                } else {
+                    showToast('上传失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        });
+
+        // 远程URL更新处理
+        $('#urlForm').on('submit', async function(e) {
+            e.preventDefault();
+            
+            const url = $('#remoteUrl').val();
+            
+            try {
+                const response = await fetch('/api/sources_manage/update_from_url', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('远程配置更新成功', 'success');
+                    closeModal('urlModal');
+                    refreshSources();
+                } else {
+                    showToast('更新失败: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        });
+
+        // 显示测试结果
+        function showTestResult(testResult) {
+            const { success, data, error, responseTime, sourceInfo, timestamp } = testResult;
+            
+            $('#testSourceName').text(`${sourceInfo.name} (${sourceInfo.code})`);
+            $('#testTime').text(timestamp.toLocaleString());
+            
+            const statusElement = $('#testStatus');
+            if (success) {
+                statusElement.html('<i class="fas fa-check-circle text-success mr-2"></i>成功');
+                statusElement.removeClass('text-error').addClass('text-success');
+            } else {
+                statusElement.html('<i class="fas fa-times-circle text-error mr-2"></i>失败');
+                statusElement.removeClass('text-success').addClass('text-error');
+            }
+            
+            if (responseTime > 0) {
+                statusElement.append(` (${responseTime}ms)`);
+            }
+            
+            const jsonElement = $('#testResultJson');
+            if (success && data) {
+                jsonElement.text(JSON.stringify(data, null, 2));
+            } else if (error) {
+                jsonElement.text(JSON.stringify({
+                    error: error,
+                    responseTime: responseTime,
+                    timestamp: timestamp.toISOString()
+                }, null, 2));
+            } else {
+                jsonElement.text('无数据');
+            }
+            
+            $('#testResultModal')[0].showModal();
+        }
+
+        // 复制测试结果JSON
+        async function copyTestResult() {
+            const jsonText = $('#testResultJson').text();
+            
+            try {
+                await navigator.clipboard.writeText(jsonText);
+                showToast('JSON数据已复制到剪贴板', 'success');
+            } catch (error) {
+                const textArea = $('<textarea>').val(jsonText).appendTo('body');
+                textArea.select();
+                document.execCommand('copy');
+                textArea.remove();
+                showToast('JSON数据已复制到剪贴板', 'success');
+            }
+        }
+
+        // 点击模态框外部关闭
+        $(document).on('click', '.modal', function(e) {
+            if (e.target === this) {
+                $(this)[0].close();
+            }
+        });
+    </script>
+</body>
+</html> 
