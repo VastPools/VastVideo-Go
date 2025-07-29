@@ -22,7 +22,7 @@ import (
 	"vastproxy-go/utils"
 )
 
-//go:embed html/index_mobile.html html/about.html html/type_mapping.html html/sources_manage.html test_sources.html
+//go:embed html/index_mobile.html html/about.html html/type_mapping.html html/sources_manage.html
 var htmlContent embed.FS
 
 //go:embed config/config.ini config/sources.json
@@ -279,8 +279,6 @@ func main() {
 		http.HandleFunc("/about.html", aboutHandler)
 		http.HandleFunc("/type_mapping", typeMappingHandler)
 		http.HandleFunc("/sources_manage", sourcesManageHandler)
-		http.HandleFunc("/test_sources", testSourcesHandler)
-		http.HandleFunc("/test_sources_manage", testSourcesManageHandler)
 		http.HandleFunc("/demo", demoHandler)
 		http.HandleFunc("/sources_manage_preview", sourcesManagePreviewHandler)
 		http.HandleFunc("/manage", manageHandler)
@@ -335,7 +333,6 @@ func main() {
 		log.Printf("🏠 首页(移动端): http://%s:%s/", GlobalConfig.Server.Host, *port)
 		log.Printf("🎯 类型映射管理: http://%s:%s/type_mapping", GlobalConfig.Server.Host, *port)
 		log.Printf("🔧 视频源管理: http://%s:%s/sources_manage", GlobalConfig.Server.Host, *port)
-		log.Printf("🧪 视频源管理测试: http://%s:%s/test_sources_manage", GlobalConfig.Server.Host, *port)
 		log.Printf("🎬 功能演示页面: http://%s:%s/demo", GlobalConfig.Server.Host, *port)
 		log.Printf("🎨 美化预览页面: http://%s:%s/sources_manage_preview", GlobalConfig.Server.Host, *port)
 		log.Printf("🎛️ 统一管理控制台: http://%s:%s/manage", GlobalConfig.Server.Host, *port)
@@ -503,38 +500,6 @@ func sourcesManageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(content)
 	log.Printf("🎯 返回视频源管理页面 html/sources_manage.html [IP:%s]", utils.GetRequestIP(r))
-}
-
-func testSourcesHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/test_sources" {
-		http.NotFound(w, r)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	content, err := htmlContent.ReadFile("test_sources.html")
-	if err != nil {
-		log.Printf("❌ 读取 test_sources.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	w.Write(content)
-	log.Printf("🧪 返回视频源测试页面 test_sources.html [IP:%s]", utils.GetRequestIP(r))
-}
-
-func testSourcesManageHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/test_sources_manage" {
-		http.NotFound(w, r)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	content, err := os.ReadFile("test_sources_manage.html")
-	if err != nil {
-		log.Printf("❌ 读取 test_sources_manage.html 失败: %v [IP:%s]", err, utils.GetRequestIP(r))
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	w.Write(content)
-	log.Printf("🧪 返回视频源管理测试页面 test_sources_manage.html [IP:%s]", utils.GetRequestIP(r))
 }
 
 func demoHandler(w http.ResponseWriter, r *http.Request) {

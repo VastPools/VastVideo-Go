@@ -381,7 +381,7 @@
             height: 0;
         }
 
-        /* 视频网格布局 - 一行显示5个卡片，支持滚动显示所有结果 */
+        /* 视频网格布局 - 一行显示5个卡片，适应整体滚动 */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -389,11 +389,9 @@
             margin-bottom: 20px;
             width: 100%;
             box-sizing: border-box;
-            height: 600px; /* 固定高度，确保滚动条显示 */
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #6c63ff #f3f4f6;
-            padding-right: 8px; /* 为滚动条预留空间 */
+            min-height: 400px; /* 最小高度，适应内容 */
+            height: auto; /* 自适应高度 */
+            overflow-y: visible; /* 移除内部滚动，使用父容器滚动 */
         }
 
         /* 列表视图样式 */
@@ -470,24 +468,7 @@
             padding: 1px 3px;
         }
 
-        /* 自定义滚动条样式 */
-        .video-grid::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .video-grid::-webkit-scrollbar-track {
-            background: #f3f4f6;
-            border-radius: 4px;
-        }
-
-        .video-grid::-webkit-scrollbar-thumb {
-            background: #6c63ff;
-            border-radius: 4px;
-        }
-
-        .video-grid::-webkit-scrollbar-thumb:hover {
-            background: #5a52d5;
-        }
+        /* 视频网格不再需要自定义滚动条样式，使用父容器滚动 */
 
         /* 视频卡片样式 - 与index_mobile.html搜索结果完全一致 */
         .video-card {
@@ -676,9 +657,31 @@
 
         .test-content {
             display: none;
-            height: calc(90vh - 350px); /* 调整高度，为视频网格提供更多空间 */
+            height: auto; /* 自适应高度 */
             min-height: 500px; /* 最小高度 */
-            max-height: 800px; /* 最大高度 */
+            max-height: none; /* 不限制最大高度 */
+            overflow-y: visible; /* 移除内部滚动 */
+            padding-right: 0; /* 移除滚动条预留空间 */
+            padding-bottom: 0; /* 移除底部额外空间 */
+        }
+
+        /* 测试结果模态框整体滚动条样式 */
+        #testResultModal .modal-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #testResultModal .modal-box::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 4px;
+        }
+
+        #testResultModal .modal-box::-webkit-scrollbar-thumb {
+            background: #6c63ff;
+            border-radius: 4px;
+        }
+
+        #testResultModal .modal-box::-webkit-scrollbar-thumb:hover {
+            background: #5a52d5;
         }
 
         .test-content.active {
@@ -1273,7 +1276,7 @@
 
     <!-- 测试结果模态框 -->
     <dialog id="testResultModal" class="modal">
-        <div class="modal-box w-11/12 max-w-6xl h-[90vh] overflow-hidden">
+        <div class="modal-box w-11/12 max-w-6xl h-[95vh] overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #6c63ff #f3f4f6;">
             <form method="dialog">
                 <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             </form>
@@ -1309,6 +1312,11 @@
                             <i class="fas fa-chevron-down mr-1"></i>展开
                         </button>
                     </div>
+                </div>
+                <!-- 当前选择类型显示 -->
+                <div class="flex items-center gap-2 mb-2 p-2 bg-base-200 rounded-lg">
+                    <span class="text-sm font-medium">当前选择:</span>
+                    <span class="badge badge-primary" id="currentTypeDisplay">全部</span>
                 </div>
                 <div class="type-selector-collapsed" id="typeSelector">
                     <div class="flex flex-wrap gap-2" id="typeTags">
@@ -2132,8 +2140,8 @@
                     // 重新渲染视频卡片
                     renderVideoCards(data, currentSourceInfo);
                     
-                    // 滚动到顶部
-                    $('#videoGrid').scrollTop(0);
+                    // 滚动到模态框顶部
+                    $('#testResultModal .modal-box').scrollTop(0);
                     
                     showToast(`已加载第 ${pageNum} 页 (${responseTime}ms)`, 'success');
                 } else {
@@ -2247,6 +2255,9 @@
             
             // 更新当前选中的类型显示
             updateSelectedTypeDisplay();
+            
+            // 初始化当前选择类型显示
+            updateCurrentTypeDisplay(currentTypeId);
         }
 
         // 更新当前选中的类型显示
@@ -2309,6 +2320,9 @@
                 $(`.type-tag[onclick*="'${typeId}'"]`).addClass('active');
             }
             
+            // 更新当前选择类型显示
+            updateCurrentTypeDisplay(typeId);
+            
             // 自动收起类型选择器
             const typeSelector = $('#typeSelector');
             const toggleBtn = $('#toggleTypeBtn');
@@ -2341,8 +2355,8 @@
                     // 重新渲染视频卡片
                     renderVideoCards(data, currentSourceInfo);
                     
-                    // 滚动到顶部
-                    $('#videoGrid').scrollTop(0);
+                    // 滚动到模态框顶部
+                    $('#testResultModal .modal-box').scrollTop(0);
                     
                     showToast(`已加载 ${typeId === 'all' ? '全部' : '类型'} 视频`, 'success');
                 } else {
@@ -2351,6 +2365,25 @@
             } catch (error) {
                 showToast('网络错误: ' + error.message, 'error');
             }
+        }
+
+        // 更新当前选择类型显示
+        function updateCurrentTypeDisplay(typeId) {
+            const displayElement = $('#currentTypeDisplay');
+            let displayText = '全部';
+            
+            if (typeId !== 'all') {
+                // 从当前激活的标签中获取类型名称
+                const activeTag = $(`.type-tag[onclick*="'${typeId}'"]`);
+                if (activeTag.length > 0) {
+                    displayText = activeTag.text().trim();
+                } else {
+                    displayText = `类型 ${typeId}`;
+                }
+            }
+            
+            displayElement.text(displayText);
+            console.log('🏷️ 更新当前选择类型显示:', displayText);
         }
 
         // 更新响应时间显示
@@ -2427,6 +2460,7 @@
             const rate = video.vod_score || video.rate || video.rating || '';
             const type = video.type_name || video.type || video.category || '';
             
+            // 显示基本信息
             const detailHtml = `
                 <div class="p-4">
                     <h3 class="text-lg font-bold mb-4">${title}</h3>
@@ -2439,6 +2473,17 @@
                         ${content ? `<p><strong>简介:</strong> ${content}</p>` : ''}
                         <p><strong>来源:</strong> ${sourceInfo.name} (${sourceInfo.code})</p>
                     </div>
+                    
+                    <!-- 剧集信息区域 -->
+                    <div class="mt-6">
+                        <h4 class="text-md font-semibold mb-3 flex items-center">
+                            <i class="fas fa-list mr-2"></i>剧集信息
+                            <span class="ml-2 text-sm font-normal opacity-70" id="episodeCount"></span>
+                        </h4>
+                        <div id="episodeContent" class="bg-base-200 rounded-lg p-3">
+                            ${renderEpisodeInfoFromVideo(video)}
+                        </div>
+                    </div>
                 </div>
             `;
             
@@ -2447,7 +2492,7 @@
             if ($(`#${modalId}`).length === 0) {
                 $('body').append(`
                     <dialog id="${modalId}" class="modal">
-                        <div class="modal-box">
+                        <div class="modal-box w-11/12 max-w-4xl">
                             <form method="dialog">
                                 <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                             </form>
@@ -2459,6 +2504,195 @@
             
             $(`#videoDetailContent`).html(detailHtml);
             $(`#${modalId}`)[0].showModal();
+            
+            // 更新剧集数量显示
+            updateEpisodeCount(video);
+        }
+
+        // 从视频数据中渲染剧集信息
+        function renderEpisodeInfoFromVideo(video) {
+            console.log('🎬 从视频数据渲染剧集信息:', video);
+            
+            // 提取剧集信息字段
+            const vod_play_url = video.vod_play_url || video.play_url || '';
+            const vod_play_from = video.vod_play_from || video.play_from || '';
+            const vod_play_note = video.vod_play_note || video.play_note || '';
+            const episodes = video.list || video.episodes || [];
+            
+            if (episodes && episodes.length > 0) {
+                // 有剧集列表数据
+                const episodeHtml = episodes.map((episode, index) => `
+                    <div class="episode-item bg-base-100 rounded p-2 mb-2 cursor-pointer hover:bg-base-300 transition-colors">
+                        <div class="flex flex-col">
+                            <div class="text-sm font-medium mb-1">${episode.title || episode.name || `第${index + 1}集`}</div>
+                            <div class="text-xs opacity-70 break-all">${episode.url || episode.link || episode.play_url || '暂无播放地址'}</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                return `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-60 overflow-y-auto">
+                        ${episodeHtml}
+                    </div>
+                `;
+            } else if (vod_play_url) {
+                // 有播放URL数据，使用移动端的解析方法
+                const playUrls = parseVodPlayUrl(vod_play_url, vod_play_from, vod_play_note);
+                if (playUrls.length > 0) {
+                    const episodeHtml = playUrls.map((ep, index) => `
+                        <div class="episode-item bg-base-100 rounded p-2 mb-2 cursor-pointer hover:bg-base-300 transition-colors">
+                            <div class="flex flex-col">
+                                <div class="text-sm font-medium mb-1">${ep.name}</div>
+                                <div class="text-xs opacity-70 break-all">${ep.url}</div>
+                                ${ep.line ? `<div class="text-xs opacity-50 mt-1">线路: ${ep.line}</div>` : ''}
+                                ${ep.quality ? `<div class="text-xs opacity-50">质量: ${ep.quality}</div>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    return `
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-60 overflow-y-auto">
+                            ${episodeHtml}
+                        </div>
+                    `;
+                }
+            }
+            
+            // 没有剧集信息
+            return `
+                <div class="text-center py-4">
+                    <i class="fas fa-info-circle text-info text-2xl mb-2"></i>
+                    <p class="text-sm opacity-70">暂无剧集信息</p>
+                </div>
+            `;
+        }
+        
+        // 更新剧集数量显示
+        function updateEpisodeCount(video) {
+            const vod_play_url = video.vod_play_url || video.play_url || '';
+            const vod_play_from = video.vod_play_from || video.play_from || '';
+            const vod_play_note = video.vod_play_note || video.play_note || '';
+            const episodes = video.list || video.episodes || [];
+            
+            let episodeCount = 0;
+            
+            if (episodes && episodes.length > 0) {
+                // 有剧集列表数据
+                episodeCount = episodes.length;
+            } else if (vod_play_url) {
+                // 有播放URL数据，使用移动端的解析方法
+                const playUrls = parseVodPlayUrl(vod_play_url, vod_play_from, vod_play_note);
+                episodeCount = playUrls.length;
+            }
+            
+            const countElement = document.getElementById('episodeCount');
+            if (countElement) {
+                if (episodeCount > 0) {
+                    countElement.textContent = `(${episodeCount}集)`;
+                    countElement.style.display = 'inline';
+                } else {
+                    countElement.textContent = '(暂无剧集)';
+                    countElement.style.display = 'inline';
+                }
+            }
+        }
+
+        // 渲染剧集信息
+        function renderEpisodeInfo(videoData) {
+            const episodeContent = $('#episodeContent');
+            
+            // 提取剧集信息
+            const episodes = videoData.list || videoData.episodes || [];
+            const playUrls = videoData.vod_play_url || videoData.play_url || '';
+            const playFrom = videoData.vod_play_from || videoData.play_from || '';
+            
+            if (episodes && episodes.length > 0) {
+                // 有剧集列表数据
+                const episodeHtml = episodes.map((episode, index) => `
+                    <div class="episode-item bg-base-100 rounded p-2 mb-2 cursor-pointer hover:bg-base-300 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium">第${index + 1}集</span>
+                            <span class="text-xs opacity-70">${episode.title || episode.name || ''}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                episodeContent.html(`
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-60 overflow-y-auto">
+                        ${episodeHtml}
+                    </div>
+                `);
+            } else if (playUrls) {
+                // 有播放URL数据，需要解析
+                const episodeHtml = parsePlayUrls(playUrls, playFrom);
+                episodeContent.html(`
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-60 overflow-y-auto">
+                        ${episodeHtml}
+                    </div>
+                `);
+            } else {
+                // 没有剧集信息
+                episodeContent.html(`
+                    <div class="text-center py-4">
+                        <i class="fas fa-info-circle text-info text-2xl mb-2"></i>
+                        <p class="text-sm opacity-70">暂无剧集信息</p>
+                    </div>
+                `);
+            }
+        }
+
+        // 解析播放地址 - 兼容多线路多剧集（参照移动端实现）
+        function parseVodPlayUrl(vod_play_url, vod_play_from, vod_play_note) {
+            const play_urls = [];
+            if (!vod_play_url) return play_urls;
+
+            const lines = vod_play_url.split('$$$');
+            const notes = (vod_play_note || '').split('$$$');
+            const froms = (vod_play_from || '').split('$$$');
+
+            for (let line_idx = 0; line_idx < lines.length; line_idx++) {
+                const line = lines[line_idx];
+                const line_name = froms[line_idx] ? froms[line_idx] : `线路${line_idx+1}`;
+                const note = notes[line_idx] ? notes[line_idx] : '';
+                const episodes = line.split('#');
+
+                for (const ep of episodes) {
+                    if (ep.includes('$')) {
+                        const parts = ep.split('$');
+                        if (parts.length === 2) {
+                            const ep_name = parts[0].trim();
+                            const ep_url = parts[1].trim();
+                            play_urls.push({
+                                name: ep_name,
+                                url: ep_url,
+                                line: line_name,
+                                quality: note,
+                                realUrl: ep_url
+                            });
+                        }
+                    } else if (ep.trim()) {
+                        play_urls.push({
+                            name: '播放',
+                            url: ep.trim(),
+                            line: line_name,
+                            quality: note,
+                            realUrl: ep.trim()
+                        });
+                    }
+                }
+            }
+
+            if (play_urls.length === 0 && vod_play_url) {
+                play_urls.push({
+                    name: '播放',
+                    url: vod_play_url,
+                    line: '',
+                    quality: '',
+                    realUrl: vod_play_url
+                });
+            }
+
+            return play_urls;
         }
 
         // 显示模态框
